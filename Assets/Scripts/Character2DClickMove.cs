@@ -11,32 +11,16 @@ public class Character2DClickMove : MonoBehaviour
     private Vector3 targetPosition;
     private bool isMoving = false;
 
-    public Transform boundMin; // GameObject batas kiri bawah
-    public Transform boundMax; // GameObject batas kanan atas
-
-    private Vector2 minBounds;
-    private Vector2 maxBounds;
-
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         originalColor = spriteRenderer.color;
         targetPosition = transform.position;
-
-        // Ambil nilai posisi dari GameObject batas
-        if (boundMin != null && boundMax != null)
-        {
-            minBounds = boundMin.position;
-            maxBounds = boundMax.position;
-        }
-        else
-        {
-            Debug.LogWarning("BoundMin dan BoundMax belum diset!");
-        }
     }
 
     void OnMouseDown()
     {
+        // Pilih karakter ini
         if (selectedCharacter != null && selectedCharacter != this)
         {
             selectedCharacter.spriteRenderer.color = selectedCharacter.originalColor;
@@ -48,29 +32,37 @@ public class Character2DClickMove : MonoBehaviour
 
     void Update()
     {
-        if (selectedCharacter == this)
+        // === Arahkan ke tempat klik kanan jika karakter ini sedang dipilih ===
+        if (selectedCharacter == this && Input.GetMouseButtonDown(1))
         {
-            if (Input.GetMouseButtonDown(1)) // klik kanan
+            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mouseWorldPos.z = 0f;
+            targetPosition = mouseWorldPos;
+            isMoving = true;
+        }
+
+        // === Karakter tetap bergerak ke target meski tidak dipilih ===
+        if (isMoving)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
+            if (Vector3.Distance(transform.position, targetPosition) < 0.05f)
             {
-                Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorldPos.z = 0f;
-
-                // Clamp target dengan batas map
-                mouseWorldPos.x = Mathf.Clamp(mouseWorldPos.x, minBounds.x, maxBounds.x);
-                mouseWorldPos.y = Mathf.Clamp(mouseWorldPos.y, minBounds.y, maxBounds.y);
-
-                targetPosition = mouseWorldPos;
-                isMoving = true;
+                isMoving = false;
             }
+        }
 
-            if (isMoving)
+        // === Klik kiri di luar karakter untuk membatalkan pilihan ===
+        if (selectedCharacter == this && Input.GetMouseButtonDown(0))
+        {
+            // Raycast untuk memastikan tidak klik karakter
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+
+            if (hit.collider == null || hit.collider.gameObject != gameObject)
             {
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
-
-                if (Vector3.Distance(transform.position, targetPosition) < 0.05f)
-                {
-                    isMoving = false;
-                }
+                spriteRenderer.color = originalColor;
+                selectedCharacter = null;
             }
         }
     }
