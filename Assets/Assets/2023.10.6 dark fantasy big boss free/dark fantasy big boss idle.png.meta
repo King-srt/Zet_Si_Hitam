@@ -522,7 +522,23 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      dark fantasy big boss idle_0: -7561745151680243969
+      dark fantasy big boss idle_1: -5282260821331746349
+      dark fantasy big boss idle_10: -1747729083917642668
+      dark fantasy big boss idle_11: 7014220915409568635
+      dark fantasy big boss idle_12: -4131756879200438946
+      dark fantasy big boss idle_13: 1633307818020906279
+      dark fantasy big boss idle_14: -5340466250981135536
+      dark fantasy big boss idle_15: -9214601997269640906
+      dark fantasy big boss idle_2: 138237327120681757
+      dark fantasy big boss idle_3: 1385317092577606974
+      dark fantasy big boss idle_4: 2907179689892506513
+      dark fantasy big boss idle_5: -4077742213526953967
+      dark fantasy big boss idle_6: 7886561911035061861
+      dark fantasy big boss idle_7: 6942453321910409354
+      dark fantasy big boss idle_8: -6451080061995027987
+      dark fantasy big boss idle_9: 8925357167426626694
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

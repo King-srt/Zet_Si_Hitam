@@ -647,7 +647,28 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      FreePack_0: -7487882560877789140
+      FreePack_1: 4903099407256252547
+      FreePack_10: -3463354933243899461
+      FreePack_11: -8764965426705603438
+      FreePack_12: 939264097576087446
+      FreePack_13: 6036934334336894495
+      FreePack_14: -6936057987443640182
+      FreePack_15: -2015156786378593274
+      FreePack_16: -3782032975704049256
+      FreePack_17: -7910195237937851234
+      FreePack_18: 1820245197975899975
+      FreePack_19: -6091981265946106432
+      FreePack_2: -5062081054402078237
+      FreePack_20: -1787317447362759218
+      FreePack_3: 1695292101499232445
+      FreePack_4: -1400023059284977056
+      FreePack_5: 231327564077186981
+      FreePack_6: -7066154344053807571
+      FreePack_7: 7665148347240279577
+      FreePack_8: -4241286239443518935
+      FreePack_9: 3349166632371518244
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
