@@ -15,6 +15,13 @@ public class Character2DClickMove : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    // Event untuk komunikasi dengan kamera
+    public delegate void OnCharacterSelected(Character2DClickMove character);
+    public static event OnCharacterSelected CharacterSelected;
+
+    public delegate void OnCharacterMoved(Vector3 position);
+    public static event OnCharacterMoved CharacterMoved;
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -38,6 +45,9 @@ public class Character2DClickMove : MonoBehaviour
         selectedCharacter = this;
         spriteRenderer.color = highlightColor;
         SetKinematic(false); // Ubah ke dynamic saat dipilih
+
+        // Kirim event karakter dipilih ke kamera
+        CharacterSelected?.Invoke(this);
     }
 
     void Update()
@@ -72,6 +82,9 @@ public class Character2DClickMove : MonoBehaviour
         {
             Vector2 nextPos = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(nextPos);
+
+            // Kirim posisi bergerak ke kamera
+            CharacterMoved?.Invoke(transform.position);
 
             if (Vector2.Distance(rb.position, targetPosition) < 0.05f)
             {

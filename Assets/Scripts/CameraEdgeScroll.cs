@@ -1,14 +1,13 @@
 using UnityEngine;
 
-public class CameraEdgeScroll : MonoBehaviour
+public class CameraDragScroll : MonoBehaviour
 {
-    public float scrollSpeed = 10f;
-    public float edgeSize = 10f; // Ukuran tepi dalam pixel
-
-    public Transform mapBoundMin; // Drag GameObject MapBoundMin ke sini
-    public Transform mapBoundMax; // Drag GameObject MapBoundMax ke sini
+    public float dragSpeed = 0.5f;
+    public Transform mapBoundMin;
+    public Transform mapBoundMax;
 
     private Camera cam;
+    private Vector3 dragOrigin;
 
     void Start()
     {
@@ -19,30 +18,27 @@ public class CameraEdgeScroll : MonoBehaviour
     {
         if (mapBoundMin == null || mapBoundMax == null) return;
 
-        Vector3 pos = transform.position;
-        Vector3 mousePos = Input.mousePosition;
+        if (Input.GetMouseButtonDown(0))
+        {
+            dragOrigin = cam.ScreenToWorldPoint(Input.mousePosition);
+        }
 
-        // Deteksi posisi mouse terhadap tepi layar
-        if (mousePos.x >= Screen.width - edgeSize)
-            pos.x += scrollSpeed * Time.deltaTime;
-        else if (mousePos.x <= edgeSize)
-            pos.x -= scrollSpeed * Time.deltaTime;
+        if (Input.GetMouseButton(0))
+        {
+            Vector3 difference = dragOrigin - cam.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 newPos = transform.position + difference * dragSpeed;
 
-        if (mousePos.y >= Screen.height - edgeSize)
-            pos.y += scrollSpeed * Time.deltaTime;
-        else if (mousePos.y <= edgeSize)
-            pos.y -= scrollSpeed * Time.deltaTime;
+            // Clamp posisi kamera
+            float camHalfHeight = cam.orthographicSize;
+            float camHalfWidth = camHalfHeight * cam.aspect;
 
-        // Batasi kamera agar tidak keluar dari bounds
-        float camHalfHeight = cam.orthographicSize;
-        float camHalfWidth = camHalfHeight * cam.aspect;
+            float clampedX = Mathf.Clamp(newPos.x, mapBoundMin.position.x + camHalfWidth, mapBoundMax.position.x - camHalfWidth);
+            float clampedY = Mathf.Clamp(newPos.y, mapBoundMin.position.y + camHalfHeight, mapBoundMax.position.y - camHalfHeight);
 
-        Vector2 minBounds = mapBoundMin.position;
-        Vector2 maxBounds = mapBoundMax.position;
+            transform.position = new Vector3(clampedX, clampedY, transform.position.z);
 
-        pos.x = Mathf.Clamp(pos.x, minBounds.x + camHalfWidth, maxBounds.x - camHalfWidth);
-        pos.y = Mathf.Clamp(pos.y, minBounds.y + camHalfHeight, maxBounds.y - camHalfHeight);
-
-        transform.position = pos;
+            // Update drag origin untuk smooth dragging
+            dragOrigin = cam.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 }
