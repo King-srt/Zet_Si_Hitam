@@ -184,7 +184,10 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      dark fantasy big boss hit_0: 6135620130815597759
+      dark fantasy big boss hit_1: 3843492170851707373
+      dark fantasy big boss hit_2: 6575320031417062203
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
