@@ -131,6 +131,8 @@ MonoBehaviour:
   detectionRadius: 5
   retreatDistance: 10
   spawner: {fileID: 0}
+  maxSpeed: 2
+  maxForce: 5
 --- !u!61 &7224595752530761167
 BoxCollider2D:
   m_ObjectHideFlags: 0
