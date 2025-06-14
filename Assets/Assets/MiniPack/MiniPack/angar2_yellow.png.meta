@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      angar2_yellow_0: -8400116752411796063
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

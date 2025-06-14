@@ -134,7 +134,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      buildingForDog_green_0: -1334240125468025183
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
