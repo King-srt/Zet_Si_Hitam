@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -7488510377489260950}
   - component: {fileID: -4948438475210584326}
   - component: {fileID: -8785494722900166079}
+  - component: {fileID: -3460678098426216957}
   m_Layer: 0
   m_Name: ZombieKroco
   m_TagString: Untagged
@@ -204,3 +205,17 @@ MonoBehaviour:
   detectionRadius: 5
   retreatDistance: 10
   spawner: {fileID: 0}
+--- !u!114 &-3460678098426216957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8518690204541919610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 271b3a1d499605144b51824a408518d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightColor: {r: 0.5169811, g: 0.5169811, b: 0.5169811, a: 1}
+  moveSpeed: 5
