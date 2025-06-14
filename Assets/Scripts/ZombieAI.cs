@@ -10,6 +10,11 @@ public class ZombieAI : MonoBehaviour
     public float retreatDistance = 10f;
     public ZombieSpawner spawner;
 
+    [Header("Steering Behavior")]
+    public float maxSpeed = 2f;
+    public float maxForce = 5f;
+    private Vector2 velocity = Vector2.zero;
+
     private Animator animator;
     private Transform currentTarget;
     private bool isAttacking = false;
@@ -61,28 +66,26 @@ public class ZombieAI : MonoBehaviour
             AttackTarget();
     }
 
-   void DetectNearbyTarget()
-{
-    BaseUnit[] targets = FindObjectsOfType<BaseUnit>();
-    Transform closest = null;
-    float minDistance = Mathf.Infinity;
-
-    foreach (BaseUnit tu in targets)
+    void DetectNearbyTarget()
     {
-        if (tu == null) continue;
+        BaseUnit[] targets = FindObjectsOfType<BaseUnit>();
+        Transform closest = null;
+        float minDistance = Mathf.Infinity;
 
-        float dist = Vector2.Distance(transform.position, tu.transform.position);
-        if (dist < minDistance)
+        foreach (BaseUnit tu in targets)
         {
-            closest = tu.transform;
-            minDistance = dist;
+            if (tu == null) continue;
+
+            float dist = Vector2.Distance(transform.position, tu.transform.position);
+            if (dist < minDistance)
+            {
+                closest = tu.transform;
+                minDistance = dist;
+            }
         }
+
+        currentTarget = (closest != null) ? closest : targetBase;
     }
-
-    // Kalau tidak ada target hidup, fallback ke base
-    currentTarget = (closest != null) ? closest : targetBase;
-}
-
 
     void MoveToTarget()
     {
@@ -90,8 +93,26 @@ public class ZombieAI : MonoBehaviour
             animator.ResetTrigger("Attack");
 
         animator.SetBool("IsWalking", true);
-        Vector2 direction = (currentTarget.position - transform.position).normalized;
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
+
+        // --- Begin Steering Behavior (Seek) ---
+        Vector2 desired = ((Vector2)currentTarget.position - (Vector2)transform.position).normalized * maxSpeed;
+        Vector2 steering = desired - velocity;
+        steering = Vector2.ClampMagnitude(steering, maxForce);
+
+        velocity += steering * Time.deltaTime;
+        velocity = Vector2.ClampMagnitude(velocity, maxSpeed);
+
+        transform.position += (Vector3)(velocity * Time.deltaTime);
+        // Optional: atur arah hadap
+        // Flip arah tanpa mengubah skala prefab asli
+if (velocity.x != 0)
+{
+    Vector3 localScale = transform.localScale;
+    localScale.x = Mathf.Abs(localScale.x) * Mathf.Sign(velocity.x);
+    transform.localScale = localScale;
+}
+
+        // --- End Steering ---
     }
 
     void AttackTarget()
@@ -99,6 +120,7 @@ public class ZombieAI : MonoBehaviour
         if (!isAttacking)
         {
             isAttacking = true;
+            velocity = Vector2.zero; // stop saat attack
             animator.SetBool("IsWalking", false);
             animator.SetTrigger("Attack");
 
@@ -111,7 +133,6 @@ public class ZombieAI : MonoBehaviour
             StartCoroutine(ResetAttackCooldown());
         }
     }
-
 
     void Retreat()
     {
@@ -129,8 +150,9 @@ public class ZombieAI : MonoBehaviour
     {
         if (isDead) return;
         isDead = true;
-
         isAttacking = true;
+        velocity = Vector2.zero;
+
         animator.SetBool("IsWalking", false);
         animator.SetTrigger("Die");
 
@@ -140,7 +162,6 @@ public class ZombieAI : MonoBehaviour
             FindObjectOfType<ZombieSpawner>()?.StopSpawning();
 
         spawner?.OnZombieDestroyed(this);
-
         StartCoroutine(DestroyAfterDeathAnim());
     }
 
@@ -153,7 +174,6 @@ public class ZombieAI : MonoBehaviour
 
         Destroy(gameObject);
     }
-
 
     IEnumerator ResetAttackCooldown()
     {
@@ -172,13 +192,14 @@ public class ZombieAI : MonoBehaviour
     }
 
     IEnumerator UpdateTargetEvery(float interval)
-{
-    while (!isDead)
     {
-        DetectNearbyTarget();
-        yield return new WaitForSeconds(interval);
+        while (!isDead)
+        {
+            DetectNearbyTarget();
+            yield return new WaitForSeconds(interval);
+        }
     }
-}
+
     bool AllTargetsDestroyed()
     {
         var targets = Object.FindObjectsByType<BaseUnit>(FindObjectsSortMode.None);
