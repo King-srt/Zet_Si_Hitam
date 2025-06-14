@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Darkness_20250612_231104_0000_0: -363208623331424435
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

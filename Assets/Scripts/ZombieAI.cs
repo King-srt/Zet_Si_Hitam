@@ -43,7 +43,7 @@ public class ZombieAI : MonoBehaviour
         if (currentTarget == null)
             currentTarget = targetBase;
 
-        if (currentTarget == null || currentTarget.GetComponent<TargetUnit>() == null)
+        if (currentTarget == null || currentTarget.GetComponent<BaseUnit>() == null)
         {
             animator.ResetTrigger("Attack");
             isAttacking = false;
@@ -63,11 +63,11 @@ public class ZombieAI : MonoBehaviour
 
    void DetectNearbyTarget()
 {
-    TargetUnit[] targets = FindObjectsOfType<TargetUnit>();
+    BaseUnit[] targets = FindObjectsOfType<BaseUnit>();
     Transform closest = null;
     float minDistance = Mathf.Infinity;
 
-    foreach (TargetUnit tu in targets)
+    foreach (BaseUnit tu in targets)
     {
         if (tu == null) continue;
 
@@ -102,7 +102,7 @@ public class ZombieAI : MonoBehaviour
             animator.SetBool("IsWalking", false);
             animator.SetTrigger("Attack");
 
-            TargetUnit tu = currentTarget.GetComponent<TargetUnit>();
+            BaseUnit tu = currentTarget.GetComponent<BaseUnit>();
             if (tu != null)
             {
                 tu.TakeDamage(10);
@@ -181,7 +181,7 @@ public class ZombieAI : MonoBehaviour
 }
     bool AllTargetsDestroyed()
     {
-        var targets = Object.FindObjectsByType<TargetUnit>(FindObjectsSortMode.None);
+        var targets = Object.FindObjectsByType<BaseUnit>(FindObjectsSortMode.None);
         return targets.Length == 0;
     }
 }
