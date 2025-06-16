@@ -1,54 +1,93 @@
 using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 public class ZombieSpawner : MonoBehaviour
 {
+    [Header("Spawner Settings")]
     public GameObject zombiePrefab;
-    public Transform baseTransform;
-    public float spawnRadius = 8f;
-    public float spawnInterval = 5f;
-    public int maxZombies = 10;
+    public int zombiesPerWave = 5;
+    public float spawnRadius = 5f;
+    public float spawnInterval = 1f;
 
-    private int currentZombies = 0;
+    [Header("Runtime")]
+    public List<ZombieAI> activeZombies = new List<ZombieAI>();
+    public bool spawning = false;
+
+    void OnEnable()
+    {
+        GameManager.OnTimeChanged += HandleTimeChanged;
+    }
+
+    void OnDisable()
+    {
+        GameManager.OnTimeChanged -= HandleTimeChanged;
+    }
 
     void Start()
     {
-        InvokeRepeating(nameof(SpawnZombie), 1f, spawnInterval);
+        // Remove this: StartCoroutine(SpawnWave());
+    }
+
+    private void HandleTimeChanged(bool isNight)
+    {
+        if (isNight && !spawning)
+        {
+            StartCoroutine(SpawnWave());
+        }
+        else if (!isNight)
+        {
+            // Optionally, stop spawning if day starts
+            StopSpawning();
+        }
+    }
+
+    public IEnumerator SpawnWave()
+    {
+        spawning = true;
+
+        for (int i = 0; i < zombiesPerWave; i++)
+        {
+            SpawnZombie();
+            yield return new WaitForSeconds(spawnInterval);
+        }
+
+        spawning = false;
     }
 
     void SpawnZombie()
     {
-        if (currentZombies >= maxZombies) return;
-
-        if (baseTransform == null)
-        {
-            Debug.LogWarning("Base transform sudah dihancurkan. Zombie tidak bisa spawn.");
-            CancelInvoke(nameof(SpawnZombie));
-            return;
-        }
-
-        Vector2 spawnPos = (Vector2)baseTransform.position + Random.insideUnitCircle.normalized * spawnRadius;
+        Vector2 spawnPos = (Vector2)transform.position + Random.insideUnitCircle * spawnRadius;
         GameObject zombie = Instantiate(zombiePrefab, spawnPos, Quaternion.identity);
 
-        ZombieAI ai = zombie.GetComponent<ZombieAI>();
-        if (ai != null)
+        ZombieAI zombieAI = zombie.GetComponent<ZombieAI>();
+        if (zombieAI != null)
         {
-            ai.targetBase = baseTransform;
-            ai.spawner = this;
+            zombieAI.spawner = this;
+            activeZombies.Add(zombieAI);
         }
-
-        currentZombies++;
     }
 
-    // ✅ Versi yang menerima parameter ZombieAI
     public void OnZombieDestroyed(ZombieAI zombie)
     {
-        currentZombies = Mathf.Max(0, currentZombies - 1);
-        Debug.Log($"Zombie {zombie.name} dihancurkan. Sisa zombie: {currentZombies}");
+        if (activeZombies.Contains(zombie))
+        {
+            activeZombies.Remove(zombie);
+        }
     }
 
     public void StopSpawning()
     {
-        CancelInvoke(nameof(SpawnZombie));
-        Debug.Log("Spawner dimatikan karena semua target telah hancur.");
+        StopAllCoroutines();
+        spawning = false;
+    }
+
+    public void ForceRetreatAll()
+    {
+        foreach (var zombie in activeZombies)
+        {
+            if (zombie != null)
+                zombie.StartRetreat();
+        }
     }
 }
