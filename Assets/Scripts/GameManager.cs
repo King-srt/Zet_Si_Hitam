@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        SetState(TimeState.Day); // Mulai dari siang hari
+        SetState(TimeState.Day);
         UpdateDayText();
     }
 
@@ -157,5 +157,23 @@ public class GameManager : MonoBehaviour
         yield return null;
     }
 }
+// Misal di PauseMenu.cs
+    public static GameObject cameraObject; // drag Camera di Inspector
+    public static bool IsPaused { get; private set; } = false; // <-- BENAR, di dalam class
 
+    public static void PauseGame()
+    {
+        IsPaused = true;
+        Time.timeScale = 0f;
+        cameraObject.GetComponent<CameraMovements>().enabled = false;
+        // tampilkan UI pause
+    }
+
+    public static void ResumeGame()
+    {
+        IsPaused = false;
+        Time.timeScale = 1f;
+        cameraObject.GetComponent<CameraMovements>().enabled = true;
+        // sembunyikan UI pause
+    }
 }

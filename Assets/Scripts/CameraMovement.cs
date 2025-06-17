@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections;
+using UnityEngine.EventSystems;
 
 public class CameraMovements : MonoBehaviour
 {
@@ -85,6 +86,12 @@ public class CameraMovements : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.IsPaused)
+            return;
+
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            return;
+    
         // === Zoom ===
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0f)
