@@ -1,10 +1,25 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Rendering.Universal;
+using System.Collections;
+using System;
+
+
+
 using TMPro; // <-- TMP namespace
 
 public class GameManager : MonoBehaviour
 {
     public enum TimeState { Day, Night }
+    public static event Action<bool> OnTimeChanged; // true = malam, false = siang
+    public static bool IsNight { get; private set; } = false; //ini untuk zombie ntar
+
+
+    [Header("Lighting")]
+    public UnityEngine.Rendering.Universal.Light2D globalLight; // pastikan pakai URP
+    Color dayColor = new Color(1f, 1f, 0.9f, 1f);
+    public Color nightColor = new Color(0.2f, 0.3f, 0.5f, 1f);
+    float lightTransitionDuration = 2f; // durasi transisi
 
     [Header("Time Settings")]
     public float dayDuration = 180f;  // 3 menit
@@ -63,24 +78,31 @@ public class GameManager : MonoBehaviour
     }
 
     void SetState(TimeState newState)
-    {
-        currentState = newState;
+{
+    currentState = newState;
 
-        if (newState == TimeState.Day)
-        {
-            timer = dayDuration;
-            sunIcon?.SetActive(true);
-            moonIcon?.SetActive(false);
-            Debug.Log($"☀️ Siang dimulai (Day {dayCount})");
-        }
-        else
-        {
-            timer = nightDuration;
-            sunIcon?.SetActive(false);
-            moonIcon?.SetActive(true);
-            Debug.Log("🌙 Malam dimulai");
-        }
+    if (newState == TimeState.Day)
+    {   
+        IsNight = false; // <-- Fix here
+        timer = dayDuration;
+        sunIcon?.SetActive(true);
+        moonIcon?.SetActive(false);
+        StartCoroutine(SmoothLightTransition(dayColor));
+        OnTimeChanged?.Invoke(false); // false = day
+        Debug.Log($"☀️ Siang dimulai (Day {dayCount})");
     }
+    else
+    {
+        IsNight = true; // <-- Fix here
+        timer = nightDuration;
+        sunIcon?.SetActive(false);
+        moonIcon?.SetActive(true);
+        OnTimeChanged?.Invoke(true); // true = night
+        StartCoroutine(SmoothLightTransition(nightColor));
+        Debug.Log("🌙 Malam dimulai");
+    }
+}
+
 
     void UpdateDayText()
     {
@@ -120,4 +142,20 @@ public class GameManager : MonoBehaviour
     {
         return dayCount;
     }
+
+
+//ini transisi untuk smooth siang ke malam nya
+    IEnumerator SmoothLightTransition(Color targetColor)
+{
+    Color startColor = globalLight.color;
+    float t = 0;
+
+    while (t < 1f)
+    {
+        t += Time.deltaTime / lightTransitionDuration;
+        globalLight.color = Color.Lerp(startColor, targetColor, t);
+        yield return null;
+    }
+}
+
 }

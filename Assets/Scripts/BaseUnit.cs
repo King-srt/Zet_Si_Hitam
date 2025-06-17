@@ -24,14 +24,14 @@ public class BaseUnit : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    // === EVENT (opsional digunakan kamera/fungsi lain) ===
+    // === EVENTS ===
     public delegate void OnUnitSelected(BaseUnit unit);
     public static event OnUnitSelected UnitSelected;
 
     public delegate void OnUnitMoved(Vector3 position);
     public static event OnUnitMoved UnitMoved;
 
-    // === START ===
+    // === INIT ===
     void Start()
     {
         currentHP = maxHP;
@@ -46,7 +46,7 @@ public class BaseUnit : MonoBehaviour
         rb.bodyType = RigidbodyType2D.Kinematic;
     }
 
-    // === MOUSE INPUT ===
+    // === INPUT SELEKSI DAN GERAK ===
     void OnMouseDown()
     {
         if (selectedUnit != null && selectedUnit != this)
@@ -69,8 +69,7 @@ public class BaseUnit : MonoBehaviour
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             mouseWorldPos.z = 0f;
 
-            targetPosition = mouseWorldPos;
-            isMoving = true;
+            SetTargetPosition(mouseWorldPos);
         }
 
         if (selectedUnit == this && Input.GetMouseButtonDown(0))
@@ -115,7 +114,7 @@ public class BaseUnit : MonoBehaviour
         isMoving = true;
     }
 
-    // === HEALTH LOGIC ===
+    // === HEALTH & DAMAGE ===
     public void TakeDamage(int amount)
     {
         currentHP -= amount;
@@ -127,13 +126,14 @@ public class BaseUnit : MonoBehaviour
         }
     }
 
-    private void Die()
+    public virtual void Die()
     {
         Debug.Log($"{gameObject.name} has been destroyed!");
         Destroy(gameObject);
     }
 
-    public bool IsDestroyed()
+    // === HEALTH UTIL ===
+    public bool IsDead()
     {
         return currentHP <= 0;
     }

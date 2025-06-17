@@ -3,17 +3,23 @@ using System.Collections;
 
 public class ZombieAI : MonoBehaviour
 {
-    public Transform targetBase;
-    public float speed = 2f;
+    [Header("Targeting & Movement")]
     public float attackRange = 1.5f;
-    public float detectionRadius = 5f;
     public float retreatDistance = 10f;
-    public ZombieSpawner spawner;
 
     [Header("Steering Behavior")]
     public float maxSpeed = 2f;
     public float maxForce = 5f;
     private Vector2 velocity = Vector2.zero;
+
+    [Header("Zombie Settings")]
+    public float attackCooldown = 1.0f;
+    public float retreatDelay = 30f;
+    public int damage = 10;
+
+    [Header("References")]
+    public ZombieSpawner spawner;
+    public string[] targetTags = { "Knight", "Archer", "Base" };
 
     private Animator animator;
     private Transform currentTarget;
@@ -24,77 +30,48 @@ public class ZombieAI : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        StartCoroutine(StartRetreatAfterDelay(30f));
-        StartCoroutine(UpdateTargetEvery(1f)); // per detik
-        currentTarget = targetBase;
+
+        StartCoroutine(UpdateTargetRoutine(1f));
+        Invoke(nameof(StartRetreat), retreatDelay);
     }
 
-    void Update()
+   void Update()
+{
+    if (isDead)
+        return;
+
+    if (isRetreating)
     {
-        if (isDead) return;
+        Retreat();
+        return;
+    }
 
-        if (isRetreating)
-        {
-            Retreat();
-            return;
-        }
+    // FIX: Zombies attack at night, retreat at day
+    if (!GameManager.IsNight)
+        return;
 
-        if (AllTargetsDestroyed())
-        {
-            Die();
-            return;
-        }
-
-        if (currentTarget == null)
-            currentTarget = targetBase;
-
-        if (currentTarget == null || currentTarget.GetComponent<BaseUnit>() == null)
-        {
-            animator.ResetTrigger("Attack");
-            isAttacking = false;
-        }
-
-        DetectNearbyTarget();
-
+    if (currentTarget == null || currentTarget.GetComponent<BaseUnit>() == null || currentTarget.GetComponent<BaseUnit>().IsDead())
+    {
+        UpdateTarget();
         if (currentTarget == null) return;
-
-        float distance = Vector2.Distance(transform.position, currentTarget.position);
-
-        if (distance > attackRange)
-            MoveToTarget();
-        else
-            AttackTarget();
     }
 
-    void DetectNearbyTarget()
-    {
-        BaseUnit[] targets = FindObjectsOfType<BaseUnit>();
-        Transform closest = null;
-        float minDistance = Mathf.Infinity;
+    float distance = Vector2.Distance(transform.position, currentTarget.position);
 
-        foreach (BaseUnit tu in targets)
-        {
-            if (tu == null) continue;
+    if (distance > attackRange)
+        MoveToTarget();
+    else
+        TryAttack();
+}
 
-            float dist = Vector2.Distance(transform.position, tu.transform.position);
-            if (dist < minDistance)
-            {
-                closest = tu.transform;
-                minDistance = dist;
-            }
-        }
 
-        currentTarget = (closest != null) ? closest : targetBase;
-    }
 
     void MoveToTarget()
     {
-        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-            animator.ResetTrigger("Attack");
+        if (isAttacking) return;
 
         animator.SetBool("IsWalking", true);
 
-        // --- Begin Steering Behavior (Seek) ---
         Vector2 desired = ((Vector2)currentTarget.position - (Vector2)transform.position).normalized * maxSpeed;
         Vector2 steering = desired - velocity;
         steering = Vector2.ClampMagnitude(steering, maxForce);
@@ -103,69 +80,117 @@ public class ZombieAI : MonoBehaviour
         velocity = Vector2.ClampMagnitude(velocity, maxSpeed);
 
         transform.position += (Vector3)(velocity * Time.deltaTime);
-        // Optional: atur arah hadap
-        // Flip arah tanpa mengubah skala prefab asli
-if (velocity.x != 0)
-{
-    Vector3 localScale = transform.localScale;
-    localScale.x = Mathf.Abs(localScale.x) * Mathf.Sign(velocity.x);
-    transform.localScale = localScale;
-}
 
-        // --- End Steering ---
-    }
-
-    void AttackTarget()
-    {
-        if (!isAttacking)
+        // Flip arah hadap
+        if (velocity.x != 0)
         {
-            isAttacking = true;
-            velocity = Vector2.zero; // stop saat attack
-            animator.SetBool("IsWalking", false);
-            animator.SetTrigger("Attack");
-
-            BaseUnit tu = currentTarget.GetComponent<BaseUnit>();
-            if (tu != null)
-            {
-                tu.TakeDamage(10);
-            }
-
-            StartCoroutine(ResetAttackCooldown());
+            Vector3 scale = transform.localScale;
+            scale.x = Mathf.Abs(scale.x) * Mathf.Sign(velocity.x);
+            transform.localScale = scale;
         }
     }
 
-    void Retreat()
+    void TryAttack()
     {
-        Vector2 dir = (transform.position - targetBase.position).normalized;
-        transform.position += (Vector3)(dir * speed * Time.deltaTime);
+        if (isAttacking || isDead || currentTarget == null) return;
 
-        if (Vector2.Distance(transform.position, targetBase.position) > retreatDistance)
+        BaseUnit targetUnit = currentTarget.GetComponent<BaseUnit>();
+        if (targetUnit == null || targetUnit.IsDead()) // Pastikan unit masih hidup
         {
-            spawner?.OnZombieDestroyed(this);
-            Destroy(gameObject);
+            UpdateTarget();
+            return;
+        }
+
+        isAttacking = true;
+        velocity = Vector2.zero;
+        animator.SetBool("IsWalking", false);
+        animator.SetTrigger("Attack");
+
+        targetUnit.TakeDamage(damage);
+
+        StartCoroutine(ResetAttackCooldown());
+    }
+
+    IEnumerator ResetAttackCooldown()
+    {
+        yield return new WaitForSeconds(attackCooldown);
+        isAttacking = false;
+    }
+
+    void Retreat()
+{
+    Vector2 retreatDir;
+    if (currentTarget != null)
+    {
+        // Move away from the target
+        retreatDir = ((Vector2)transform.position - (Vector2)currentTarget.position).normalized;
+    }
+    else
+    {
+        // Fallback: move away from spawner or just left
+        retreatDir = ((Vector2)transform.position - GetRetreatPoint()).normalized;
+    }
+
+    // Steering behaviour (smooth acceleration)
+    Vector2 desired = retreatDir * maxSpeed;
+    Vector2 steering = desired - velocity;
+    steering = Vector2.ClampMagnitude(steering, maxForce);
+
+    velocity += steering * Time.deltaTime;
+    velocity = Vector2.ClampMagnitude(velocity, maxSpeed);
+
+    transform.position += (Vector3)(velocity * Time.deltaTime);
+
+    // Flip to face retreat direction
+    if (velocity.x != 0)
+    {
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(velocity.x);
+        transform.localScale = scale;
+    }
+
+    // Optional: destroy zombie if far enough from target/spawner
+    float retreatFrom = currentTarget != null ? Vector2.Distance(transform.position, currentTarget.position)
+                                              : Vector2.Distance(transform.position, GetRetreatPoint());
+    if (retreatFrom > retreatDistance)
+    {
+        spawner?.OnZombieDestroyed(this);
+        Destroy(gameObject);
+    }
+}
+
+
+    Vector2 GetRetreatPoint()
+    {
+        return spawner != null ? spawner.transform.position : transform.position + Vector3.left * 5f;
+    }
+
+    public void StartRetreat()
+    {
+        if (!isDead && !isRetreating)
+        {
+            isRetreating = true;
+            animator.SetBool("IsWalking", true);
         }
     }
 
     public void Die()
     {
         if (isDead) return;
+
         isDead = true;
-        isAttacking = true;
+        isAttacking = false;
         velocity = Vector2.zero;
 
         animator.SetBool("IsWalking", false);
         animator.SetTrigger("Die");
 
-        currentTarget = null;
-
-        if (AllTargetsDestroyed())
-            FindObjectOfType<ZombieSpawner>()?.StopSpawning();
-
         spawner?.OnZombieDestroyed(this);
-        StartCoroutine(DestroyAfterDeathAnim());
+
+        StartCoroutine(DestroyAfterDeathAnimation());
     }
 
-    IEnumerator DestroyAfterDeathAnim()
+    IEnumerator DestroyAfterDeathAnimation()
     {
         yield return null;
         yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Die"));
@@ -175,34 +200,75 @@ if (velocity.x != 0)
         Destroy(gameObject);
     }
 
-    IEnumerator ResetAttackCooldown()
-    {
-        yield return new WaitForSeconds(1.0f);
-        isAttacking = false;
-    }
-
-    IEnumerator StartRetreatAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        if (!isDead)
-        {
-            isRetreating = true;
-            animator.SetBool("IsWalking", true);
-        }
-    }
-
-    IEnumerator UpdateTargetEvery(float interval)
+    IEnumerator UpdateTargetRoutine(float interval)
     {
         while (!isDead)
         {
-            DetectNearbyTarget();
+            UpdateTarget();
             yield return new WaitForSeconds(interval);
         }
     }
 
-    bool AllTargetsDestroyed()
+    void UpdateTarget()
     {
-        var targets = Object.FindObjectsByType<BaseUnit>(FindObjectsSortMode.None);
-        return targets.Length == 0;
+        float closestDistance = Mathf.Infinity;
+        Transform closest = null;
+
+        foreach (string tag in targetTags)
+        {
+            GameObject[] targets = GameObject.FindGameObjectsWithTag(tag);
+            foreach (GameObject obj in targets)
+            {
+                if (obj == null) continue;
+
+                BaseUnit unit = obj.GetComponent<BaseUnit>();
+                if (unit != null && unit.IsDead()) continue;
+
+                float dist = Vector2.Distance(transform.position, obj.transform.position);
+                if (dist < closestDistance)
+                {
+                    closestDistance = dist;
+                    closest = obj.transform;
+                }
+            }
+        }
+
+        currentTarget = closest;
+
+        if (closest == null && !isRetreating && GameManager.IsNight)
+        {
+        // Tidak ada target ditemukan, zombie idle
+        animator.SetBool("IsWalking", false);
+        }
+
     }
+
+// ini ngatur zombie untuk mundur otomatis saat siang , dan maju pas malam
+    private void OnEnable()
+{
+    GameManager.OnTimeChanged += HandleTimeChange;
+}
+
+private void OnDisable()
+{
+    GameManager.OnTimeChanged -= HandleTimeChange;
+}
+
+private void HandleTimeChange(bool isNight)
+{
+    if (isDead) return;
+
+    if (!isNight) // Daytime: retreat
+    {
+        StartRetreat();
+    }
+    else // Nighttime: attack
+    {
+        isRetreating = false;
+        isAttacking = false;
+        animator.SetBool("IsWalking", false); // Stop walking animation if needed
+    }
+}
+
+
 }
