@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 3890804592748447985}
   - component: {fileID: 7832639971298288620}
   - component: {fileID: 4949366654014163867}
-  - component: {fileID: 5687900302043344066}
   - component: {fileID: 7224595752530761167}
   - component: {fileID: 461511657692505370}
+  - component: {fileID: -4697871432152502371}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -113,26 +113,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &5687900302043344066
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6522331468494052705}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d98a0d919e77e428ff2e9b42ec4196, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetBase: {fileID: 0}
-  speed: 2
-  attackRange: 1.5
-  detectionRadius: 5
-  retreatDistance: 10
-  spawner: {fileID: 0}
-  maxSpeed: 2
-  maxForce: 5
 --- !u!61 &7224595752530761167
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -206,3 +186,31 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &-4697871432152502371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6522331468494052705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89d98a0d919e77e428ff2e9b42ec4196, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackRange: 1.5
+  retreatDistance: 10
+  maxSpeed: 2
+  maxForce: 5
+  attackCooldown: 1
+  retreatDelay: 30
+  damage: 10
+  spawner: {fileID: 0}
+  targetTags:
+  - Headquarter
+  - Worker
+  - Barrack
+  - Knight
+  - Archer
+  - Tower
+  - Wall

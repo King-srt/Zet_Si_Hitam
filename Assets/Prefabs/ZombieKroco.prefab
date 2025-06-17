@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8565616403602380370}
   - component: {fileID: -7488510377489260950}
   - component: {fileID: -4948438475210584326}
-  - component: {fileID: -8785494722900166079}
+  - component: {fileID: 7448387703016024231}
   m_Layer: 0
   m_Name: ZombieKroco
   m_TagString: Untagged
@@ -186,7 +186,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-8785494722900166079
+--- !u!114 &7448387703016024231
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,9 +198,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89d98a0d919e77e428ff2e9b42ec4196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetBase: {fileID: 0}
-  speed: 2
   attackRange: 1.5
-  detectionRadius: 5
   retreatDistance: 10
+  maxSpeed: 2
+  maxForce: 5
+  attackCooldown: 1
+  retreatDelay: 30
+  damage: 10
   spawner: {fileID: 0}
+  targetTags:
+  - Headquarter
+  - Worker
+  - Barrack
+  - Knight
+  - Archer
+  - Tower
+  - Wall
