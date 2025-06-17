@@ -4,9 +4,15 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Base
+  - Headquarter
+  - Worker
+  - Barrack
   - Knight
   - Archer
+  - Tower
+  - Wall
+  - Zombie
+  - ZombieKroco
   layers:
   - Default
   - TransparentFX
