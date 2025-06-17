@@ -32,7 +32,7 @@ public class BaseUnit : MonoBehaviour
     public static event OnUnitMoved UnitMoved;
 
     // === INIT ===
-    void Start()
+    protected virtual void Start()
     {
         currentHP = maxHP;
 
@@ -62,7 +62,7 @@ public class BaseUnit : MonoBehaviour
         UnitSelected?.Invoke(this);
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (selectedUnit == this && Input.GetMouseButtonDown(1))
         {
