@@ -19,7 +19,7 @@ public class ZombieAI : MonoBehaviour
 
     [Header("References")]
     public ZombieSpawner spawner;
-    public string[] targetTags = { "Knight", "Archer" };
+    public string[] targetTags = { "Headquarter", "Worker", "Barrack", "Knight", "Archer", "Tower", "Wall" };
 
     private Animator animator;
     private Transform currentTarget;
