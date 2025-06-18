@@ -8,6 +8,9 @@ public class WorkerUnit : BaseUnit
     public float miningInterval = 2f;
     public int goldPerMine = 10;
 
+    [Header("UI Menu")]
+    public GameObject menuUI;
+
     private float miningTimer = 0f;
     private GoldMine currentTarget;
     private WorkerAnimatorController animatorController;
@@ -77,5 +80,32 @@ public class WorkerUnit : BaseUnit
         currentTarget = mine;
         SetTargetPosition(mine.transform.position);
     }
+
+    // void OnMouseDown()
+    // {
+    //     // Toggle menu UI
+    //     if (menuUI != null)
+    //     {
+    //         if (menuUI.activeSelf)
+    //         {
+    //             CloseMenu();
+    //         }
+    //         else
+    //         {
+    //             OpenMenu();
+    //         }
+    //     }
+    // }
+
+    // public void OpenMenu()
+    // {
+    //     menuUI.SetActive(true);
+    //     menuUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
+    // }
+
+    // public void CloseMenu()
+    // {
+    //     menuUI.SetActive(false);
+    // }
 }
 
