@@ -44,6 +44,7 @@ public class WorkerUnit : BaseUnit
         if (currentTarget == null || currentTarget.IsDepleted())
         {
             animatorController.SetMining(false);
+            return; // Prevents null reference below
         }
 
         float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
