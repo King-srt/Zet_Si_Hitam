@@ -22,9 +22,39 @@ public abstract class SoldierUnit : BaseUnit
         StartCoroutine(UpdateTargetRoutine(1f));
     }
 
+    protected virtual void OnEnable()
+    {
+        GameManager.OnTimeChanged += HandleTimeChanged;
+    }
+
+    protected virtual void OnDisable()
+    {
+        GameManager.OnTimeChanged -= HandleTimeChanged;
+    }
+
+    private void HandleTimeChanged(bool isNight)
+    {
+        if (!isNight)
+        {
+            animator.SetBool("isWalking", false);
+            currentTarget = null;
+        }
+        else
+        {
+            currentTarget = FindClosestEnemy();
+        }
+    }
+
     protected override void Update()
     {
         base.Update();
+
+        // Only attack at night
+        if (!GameManager.IsNight)
+        {
+            animator.SetBool("isWalking", false);
+            return;
+        }
 
         if (currentTarget != null && !currentTarget.IsDead())
         {
@@ -32,10 +62,13 @@ public abstract class SoldierUnit : BaseUnit
 
             if (distance <= attackRange)
             {
-                // Berhenti bergerak
+                // Face the target
+                Vector3 scale = transform.localScale;
+                scale.x = Mathf.Abs(scale.x) * Mathf.Sign(currentTarget.transform.position.x - transform.position.x);
+                transform.localScale = scale;
+
                 animator.SetBool("isWalking", false);
 
-                // Serang jika waktunya
                 if (Time.time >= lastAttackTime + attackCooldown)
                 {
                     animator.SetTrigger("attack");
@@ -45,14 +78,12 @@ public abstract class SoldierUnit : BaseUnit
             }
             else
             {
-                // Bergerak menuju target
                 SetTargetPosition(currentTarget.transform.position);
                 animator.SetBool("isWalking", true);
             }
         }
         else
         {
-            // Tidak ada target, berhenti jalan
             animator.SetBool("isWalking", false);
         }
     }
@@ -102,17 +133,33 @@ private IEnumerator DestroyAfterDeathAnimation()
     Destroy(gameObject);
 }
 
-    IEnumerator UpdateTargetRoutine(float interval)
+IEnumerator UpdateTargetRoutine(float interval)
+{
+    while (true)
     {
-        while (true)
+        if (!GameManager.IsNight)
         {
-            if (currentTarget == null || currentTarget.IsDead())
-            {
-                currentTarget = FindClosestEnemy();
-            }
-            yield return new WaitForSeconds(interval);
+            currentTarget = null;
         }
+        else
+        {
+            BaseEnemy closest = FindClosestEnemy();
+            if (closest != null)
+            {
+                float distance = Vector2.Distance(transform.position, closest.transform.position);
+                if (currentTarget == null || currentTarget.IsDead() || distance < Vector2.Distance(transform.position, currentTarget.transform.position) || distance > attackRange)
+                {
+                    currentTarget = closest;
+                }
+            }
+            else
+            {
+                currentTarget = null;
+            }
+        }
+        yield return new WaitForSeconds(interval);
     }
+}
 
     BaseEnemy FindClosestEnemy()
     {

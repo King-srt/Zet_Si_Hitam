@@ -49,7 +49,7 @@ public class BaseUnit : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Kinematic; // Always keep as Kinematic for MovePosition
     }
 
     // === INPUT SELEKSI DAN GERAK ===
@@ -58,12 +58,10 @@ public class BaseUnit : MonoBehaviour
         if (selectedUnit != null && selectedUnit != this)
         {
             selectedUnit.spriteRenderer.color = selectedUnit.originalColor;
-            selectedUnit.SetKinematic(true);
         }
 
         selectedUnit = this;
         spriteRenderer.color = highlightColor;
-        SetKinematic(false);
 
         UnitSelected?.Invoke(this);
     }
@@ -87,7 +85,6 @@ public class BaseUnit : MonoBehaviour
             if (hit == null || hit.gameObject != gameObject)
             {
                 spriteRenderer.color = originalColor;
-                SetKinematic(true);
                 selectedUnit = null;
             }
         }
@@ -107,11 +104,6 @@ public class BaseUnit : MonoBehaviour
                 isMoving = false;
             }
         }
-    }
-
-    private void SetKinematic(bool isKinematic)
-    {
-        rb.bodyType = isKinematic ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
     }
 
     public void SetTargetPosition(Vector3 position)
