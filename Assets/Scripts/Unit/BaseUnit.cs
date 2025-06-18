@@ -121,7 +121,7 @@ public class BaseUnit : MonoBehaviour
     }
 
     // === HEALTH & DAMAGE ===
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHP -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. Remaining HP: {currentHP}");
@@ -134,8 +134,7 @@ public class BaseUnit : MonoBehaviour
 
     public virtual void Die()
     {
-        Debug.Log($"{gameObject.name} has been destroyed!");
-        Destroy(gameObject);
+        Debug.Log($"{gameObject.name} mati! Menunggu subclass untuk handle Destroy.");
     }
 
     // === HEALTH UTIL ===
