@@ -22,16 +22,19 @@ void Update()
 
     Vector3 dir = (target.position - transform.position).normalized;
     transform.position += dir * speed * Time.deltaTime;
+    
+    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
     if (Vector2.Distance(transform.position, target.position) < 0.2f)
-    {
-        BaseUnit enemy = target.GetComponent<BaseUnit>();
-        if (enemy != null)
         {
-            enemy.TakeDamage(damage);
+            BaseEnemy enemy = target.GetComponent<BaseEnemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
-    }
 }
 
 
