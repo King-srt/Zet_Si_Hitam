@@ -1,28 +1,31 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class BaseUnit : MonoBehaviour
 {
+    public static BaseUnit selectedUnit;
+
     // === HEALTH SETTINGS ===
     [Header("Health Settings")]
-    public int maxHP = 100;
-    private int currentHP;
-
-    [Header("Optional")]
-    public bool isCritical = false;
+    [SerializeField] protected int maxHP = 100;
+    protected int currentHP;
+    [Header("Critical Unit?")]
+    [SerializeField] protected bool isCritical = false;
 
     // === MOVEMENT SETTINGS ===
     [Header("Movement Settings")]
-    public float moveSpeed = 5f;
-    public Color highlightColor = Color.yellow;
+    [SerializeField] protected float moveSpeed = 5f;
 
-    private static BaseUnit selectedUnit;
-    private SpriteRenderer spriteRenderer;
-    private Color originalColor;
-
+    // === STATES ===
+    [SerializeField] protected Color highlightColor = Color.yellow;
     private Vector3 targetPosition;
-    private bool isMoving = false;
+    protected bool isMoving = false;
 
-    private Rigidbody2D rb;
+    // === COMPONENTS ===
+    protected Rigidbody2D rb;
+    protected SpriteRenderer spriteRenderer;
+    protected Color originalColor;
 
     // === EVENTS ===
     public delegate void OnUnitSelected(BaseUnit unit);
@@ -32,11 +35,14 @@ public class BaseUnit : MonoBehaviour
     public static event OnUnitMoved UnitMoved;
 
     // === INIT ===
-    void Start()
+    protected virtual void Start()
     {
         currentHP = maxHP;
 
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
         originalColor = spriteRenderer.color;
         targetPosition = transform.position;
 
@@ -62,7 +68,7 @@ public class BaseUnit : MonoBehaviour
         UnitSelected?.Invoke(this);
     }
 
-    void Update()
+    protected virtual void Update()
     {
         if (selectedUnit == this && Input.GetMouseButtonDown(1))
         {

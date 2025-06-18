@@ -30,16 +30,9 @@ public class BaseBuilding : MonoBehaviour
     // === INPUT SELEKSI SAJA ===
     void OnMouseDown()
     {
-        if (selectedBuilding != null && selectedBuilding != this)
-        {
-            selectedBuilding.spriteRenderer.color = selectedBuilding.originalColor;
-        }
-
-        selectedBuilding = this;
-        spriteRenderer.color = Color.yellow;
-
-        BuildingSelected?.Invoke(this);
+        SelectBuilding();
     }
+
 
     void Update()
     {
@@ -90,4 +83,19 @@ public class BaseBuilding : MonoBehaviour
     {
         return (float)currentHP / maxHP;
     }
+
+    // Tambahkan method ini di dalam BaseBuilding
+    protected void SelectBuilding()
+    {
+        if (selectedBuilding != null && selectedBuilding != this)
+        {
+            selectedBuilding.spriteRenderer.color = selectedBuilding.originalColor;
+        }
+
+        selectedBuilding = this;
+        spriteRenderer.color = Color.yellow;
+
+        BuildingSelected?.Invoke(this);
+    }
+
 }
