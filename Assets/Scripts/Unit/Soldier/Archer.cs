@@ -11,7 +11,7 @@ public class ArcherUnit : SoldierUnit
         animator = GetComponent<Animator>();
     }
 
-    protected override void PerformAttack(BaseUnit target)
+    protected override void PerformAttack(BaseEnemy target)
     {
         if (animator != null)
         {

@@ -12,7 +12,7 @@ public abstract class SoldierUnit : BaseUnit
     public string[] enemyTags = { "Zombie", "ZombieKroco" };
 
     protected float lastAttackTime = 0f;
-    protected BaseUnit currentTarget;
+    protected BaseEnemy currentTarget;
     protected Animator animator;
 
     protected override void Start()
@@ -57,12 +57,12 @@ public abstract class SoldierUnit : BaseUnit
         }
     }
 
-    public void SetTarget(BaseUnit target)
+    public void SetTarget(BaseEnemy target)
     {
         currentTarget = target;
     }
 
-    protected abstract void PerformAttack(BaseUnit target);
+    protected abstract void PerformAttack(BaseEnemy target);
 
     public override void TakeDamage(int amount)
     {
@@ -75,10 +75,32 @@ public abstract class SoldierUnit : BaseUnit
     }
 
     public override void Die()
+{
+    base.Die(); // Panggil base untuk log atau penanda kematian
+    animator.SetTrigger("death");
+    StartCoroutine(DestroyAfterDeathAnimation());
+}
+
+private IEnumerator DestroyAfterDeathAnimation()
+{
+    Debug.Log($"{gameObject.name} menunggu animasi 'death'");
+
+    // Tunggu sampai animasi state bernama "death" dimulai
+    yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("death"));
+
+    float animLength = animator.GetCurrentAnimatorStateInfo(0).length;
+    Debug.Log($"{gameObject.name} animasi death durasi: {animLength}");
+
+    if (animLength <= 0f)
     {
-        base.Die();
-        animator.SetTrigger("death");
+        animLength = 1f; // fallback
+        Debug.LogWarning($"{gameObject.name} animasi death durasinya 0, fallback ke 1 detik");
     }
+
+    yield return new WaitForSeconds(animLength);
+    Debug.Log($"{gameObject.name} menghancurkan diri setelah animasi death");
+    Destroy(gameObject);
+}
 
     IEnumerator UpdateTargetRoutine(float interval)
     {
@@ -92,10 +114,10 @@ public abstract class SoldierUnit : BaseUnit
         }
     }
 
-    BaseUnit FindClosestEnemy()
+    BaseEnemy FindClosestEnemy()
     {
         float closestDistance = Mathf.Infinity;
-        BaseUnit closest = null;
+        BaseEnemy closest = null;
 
         foreach (string tag in enemyTags)
         {
@@ -103,7 +125,7 @@ public abstract class SoldierUnit : BaseUnit
             foreach (GameObject obj in enemies)
             {
                 if (obj == null) continue;
-                BaseUnit unit = obj.GetComponent<BaseUnit>();
+                BaseEnemy unit = obj.GetComponent<BaseEnemy>();
                 if (unit == null || unit.IsDead()) continue;
 
                 float dist = Vector2.Distance(transform.position, obj.transform.position);

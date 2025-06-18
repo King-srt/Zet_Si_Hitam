@@ -128,8 +128,7 @@ public class BaseUnit : MonoBehaviour
 
     public virtual void Die()
     {
-        Debug.Log($"{gameObject.name} has been destroyed!");
-        Destroy(gameObject);
+        Debug.Log($"{gameObject.name} mati! Menunggu subclass untuk handle Destroy.");
     }
 
     // === HEALTH UTIL ===

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class KnightUnit : SoldierUnit
 {
-    protected override void PerformAttack(BaseUnit target)
+    protected override void PerformAttack(BaseEnemy target)
     {
         if (target != null)
         {

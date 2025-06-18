@@ -200,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHP: 100
   isCritical: 0
-  moveSpeed: 5
+  moveSpeed: 2
   highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   attackRange: 1.5
   attackCooldown: 1
