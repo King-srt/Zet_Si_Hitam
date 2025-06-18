@@ -14191,7 +14191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b849ff427ea2fcbf99b84f9a00838fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goldAmount: 100
+  goldAmount: 50
 --- !u!1 &1291280104
 GameObject:
   m_ObjectHideFlags: 0
@@ -58608,11 +58608,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1830913740352902568, guid: da1816fe420a34e03a3a095f61bda00f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 15.14
+      value: 19.15
       objectReference: {fileID: 0}
     - target: {fileID: 1830913740352902568, guid: da1816fe420a34e03a3a095f61bda00f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -4.66
+      value: -8.43
       objectReference: {fileID: 0}
     - target: {fileID: 1830913740352902568, guid: da1816fe420a34e03a3a095f61bda00f, type: 3}
       propertyPath: m_LocalPosition.z
@@ -58673,13 +58673,21 @@ PrefabInstance:
       propertyPath: menuUI
       value: 
       objectReference: {fileID: 757315622}
+    - target: {fileID: 1038601794870750912, guid: 38353569ae63a8476b4e63d22214fdf3, type: 3}
+      propertyPath: miningRange
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1038601794870750912, guid: 38353569ae63a8476b4e63d22214fdf3, type: 3}
+      propertyPath: goldPickupPrefab
+      value: 
+      objectReference: {fileID: 8823704969930793469, guid: c36bec3f3217a8681b7e07759df14914, type: 3}
     - target: {fileID: 6842552988079497959, guid: 38353569ae63a8476b4e63d22214fdf3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.9218972
+      value: 12.41
       objectReference: {fileID: 0}
     - target: {fileID: 6842552988079497959, guid: 38353569ae63a8476b4e63d22214fdf3, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.3
+      value: -5.2
       objectReference: {fileID: 0}
     - target: {fileID: 6842552988079497959, guid: 38353569ae63a8476b4e63d22214fdf3, type: 3}
       propertyPath: m_LocalPosition.z

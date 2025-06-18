@@ -8,6 +8,8 @@ public class WorkerUnit : BaseUnit
     public float miningInterval = 2f;
     public int goldPerMine = 10;
 
+    [Header("FX Settings")]
+    public GameObject goldPickupPrefab;
     [Header("UI Menu")]
     public GameObject menuUI;
 
@@ -17,10 +19,8 @@ public class WorkerUnit : BaseUnit
 
     protected override void Start()
     {
-        // Ambil animator controller
         animatorController = GetComponent<WorkerAnimatorController>();
 
-        // Ambil spriteRenderer dari child "Body"
         Transform body = transform.Find("Body");
         if (body != null)
         {
@@ -34,11 +34,7 @@ public class WorkerUnit : BaseUnit
     protected override void Update()
     {
         base.Update();
-
-        // Sync animasi jalan
         animatorController.SetWalking(isMoving);
-
-        // Cek dan proses mining
         HandleMining();
     }
 
@@ -47,20 +43,22 @@ public class WorkerUnit : BaseUnit
         if (currentTarget == null || currentTarget.IsDepleted())
         {
             animatorController.SetMining(false);
-            return; // Prevents null reference below
+            return;
         }
 
         float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
         if (distance <= miningRange)
         {
+            animatorController.SetMining(true);
+            Debug.Log("Mining...");
             miningTimer += Time.deltaTime;
             if (miningTimer >= miningInterval)
             {
                 bool mined = currentTarget.MineGold(goldPerMine);
                 if (mined)
                 {
-                    animatorController.SetMining(true);
-                    Debug.Log("Mining...");
+                    GameObject goldPickup = Instantiate(goldPickupPrefab, currentTarget.transform.position, Quaternion.identity);
+                    goldPickup.GetComponent<GoldPickup>().target = transform;
                 }
                 else
                 {
@@ -78,7 +76,23 @@ public class WorkerUnit : BaseUnit
     public void SetMiningTarget(GoldMine mine)
     {
         currentTarget = mine;
-        SetTargetPosition(mine.transform.position);
+
+        Collider2D mineCollider = mine.GetComponent<Collider2D>();
+        if (mineCollider == null)
+        {
+            Debug.LogWarning("GoldMine doesn't have a Collider2D!");
+            SetTargetPosition(mine.transform.position);
+            return;
+        }
+
+
+        Vector2 closestPoint = mineCollider.ClosestPoint(transform.position);
+        Vector2 direction = (closestPoint - (Vector2)transform.position).normalized;
+
+        float safeDistance = 0.2f;
+        Vector2 stopPosition = closestPoint - direction * safeDistance;
+
+        SetTargetPosition(stopPosition);
     }
 
     // void OnMouseDown()
