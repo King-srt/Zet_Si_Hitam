@@ -1,43 +1,65 @@
 using UnityEngine;
+using System;
 
-public class Headquarter : MonoBehaviour
+public class Headquarter : BaseBuilding
 {
-    [Header("Unit Settings")]
-    public GameObject workerPrefab;
-    public Transform spawnPoint;
+    [Header("UI Menu")]
+    public GameObject menuUI;
 
-    [Header("Health Settings")]
-    public int maxHealth = 100;
-    private int currentHealth;
+    [Header("Spawn Settings")]
+    public GameObject unitPrefab;
+    public Vector2 spawnOffset = new Vector2(1f, 0f);
 
-    public static event System.Action OnHQDestroyed;
+    public static event Action OnHQDestroyed;
 
-    void Start()
+    // Ketika bangunan diklik
+    void OnMouseDown()
     {
-        currentHealth = maxHealth;
-    }
+    // Panggil logika seleksi dari base class
+        SelectBuilding();
 
-    public void TrainWorker()
-    {
-        if (workerPrefab != null && spawnPoint != null)
+    // Toggle menu UI
+        if (menuUI != null)
         {
-            Instantiate(workerPrefab, spawnPoint.position, spawnPoint.rotation);
+            if (menuUI.activeSelf)
+            {
+                CloseMenu();
+            }
+            else
+            {
+                OpenMenu();
+            }
         }
     }
 
-    public void TakeDamage(int damage)
+
+    public void OpenMenu()
     {
-        currentHealth -= damage;
-        if (currentHealth <= 0)
+        menuUI.SetActive(true);
+        menuUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
+    }
+
+    public void CloseMenu()
+    {
+        menuUI.SetActive(false);
+    }
+
+    public void SpawnUnit()
+    {
+        if (unitPrefab != null)
         {
-            Die();
+            Vector2 spawnPosition = (Vector2)transform.position + spawnOffset;
+            Instantiate(unitPrefab, spawnPosition, Quaternion.identity);
         }
     }
 
-    private void Die()
+    public override void Die()
     {
+        if (IsDead()) return;
+
+        base.Die();
+
         Debug.Log("HQ Destroyed!");
-        OnHQDestroyed?.Invoke();
-        Destroy(gameObject);
+        OnHQDestroyed?.Invoke(); // Panggil event untuk GameManager
     }
 }
