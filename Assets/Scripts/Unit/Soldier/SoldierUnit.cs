@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 
 public abstract class SoldierUnit : BaseUnit
 {
@@ -8,16 +7,15 @@ public abstract class SoldierUnit : BaseUnit
     public float attackCooldown = 1f;
     public int attackDamage = 10;
 
-    [Header("Target Settings")]
-    public string[] enemyTags = { "Zombie" };  // kamu bisa sesuaikan ini
-
     protected float lastAttackTime = 0f;
     protected BaseUnit currentTarget;
+
     protected Animator animator;
+
     protected override void Start()
     {
         base.Start();
-        StartCoroutine(UpdateTargetRoutine(1f));
+        animator = GetComponent<Animator>();
     }
 
     protected override void Update()
@@ -32,14 +30,22 @@ public abstract class SoldierUnit : BaseUnit
             {
                 if (Time.time >= lastAttackTime + attackCooldown)
                 {
+                    animator.SetTrigger("attack"); // ⬅️ Trigger animasi serang
                     PerformAttack(currentTarget);
                     lastAttackTime = Time.time;
                 }
+
+                animator.SetBool("isWalking", false); // ⬅️ Berhenti jalan saat menyerang
             }
             else
             {
                 SetTargetPosition(currentTarget.transform.position);
+                animator.SetBool("isWalking", true); // ⬅️ Jalan ke target
             }
+        }
+        else
+        {
+            animator.SetBool("isWalking", false); // Tidak jalan jika tidak ada target
         }
     }
 
@@ -50,41 +56,19 @@ public abstract class SoldierUnit : BaseUnit
 
     protected abstract void PerformAttack(BaseUnit target);
 
-    IEnumerator UpdateTargetRoutine(float interval)
+    public override void TakeDamage(int amount)
     {
-        while (true)
+        base.TakeDamage(amount);
+
+        if (!IsDead())
         {
-            if (currentTarget == null || currentTarget.IsDead())
-            {
-                currentTarget = FindClosestEnemy();
-            }
-            yield return new WaitForSeconds(interval);
+            animator.SetTrigger("hurt"); // ⬅️ Trigger animasi kena hit
         }
     }
 
-    BaseUnit FindClosestEnemy()
+    public override void Die()
     {
-        float closestDistance = Mathf.Infinity;
-        BaseUnit closest = null;
-
-        foreach (string tag in enemyTags)
-        {
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag(tag);
-            foreach (GameObject obj in enemies)
-            {
-                if (obj == null) continue;
-                BaseUnit unit = obj.GetComponent<BaseUnit>();
-                if (unit == null || unit.IsDead()) continue;
-
-                float dist = Vector2.Distance(transform.position, obj.transform.position);
-                if (dist < closestDistance)
-                {
-                    closestDistance = dist;
-                    closest = unit;
-                }
-            }
-        }
-
-        return closest;
+        base.Die();
+        animator.SetTrigger("death"); // ⬅️ Trigger animasi mati
     }
 }

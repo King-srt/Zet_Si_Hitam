@@ -2,22 +2,12 @@ using UnityEngine;
 
 public class KnightUnit : SoldierUnit
 {
-
-
-void Awake()
+    protected override void PerformAttack(BaseUnit target)
     {
-        animator = GetComponent<Animator>();
-    }
-    
-protected override void PerformAttack(BaseUnit target)
-    {
-        if (animator != null)
+        if (target != null)
         {
-            animator.SetTrigger("Attack01");
+            target.TakeDamage(attackDamage);
+            Debug.Log($"{gameObject.name} (Knight) menyerang {target.name} dengan pedang.");
         }
-
-        target.TakeDamage(attackDamage);
-        Debug.Log($"{gameObject.name} (Knight) menyerang {target.name} dengan pedang.");
-
     }
 }

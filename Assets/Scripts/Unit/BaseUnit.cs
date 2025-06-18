@@ -115,7 +115,7 @@ public class BaseUnit : MonoBehaviour
     }
 
     // === HEALTH & DAMAGE ===
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHP -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. Remaining HP: {currentHP}");
