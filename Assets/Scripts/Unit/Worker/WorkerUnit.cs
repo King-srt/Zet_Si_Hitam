@@ -10,6 +10,8 @@ public class WorkerUnit : BaseUnit
 
     [Header("FX Settings")]
     public GameObject goldPickupPrefab;
+    [Header("UI Menu")]
+    public GameObject menuUI;
 
     private float miningTimer = 0f;
     private GoldMine currentTarget;
@@ -92,5 +94,32 @@ public class WorkerUnit : BaseUnit
 
         SetTargetPosition(stopPosition);
     }
+
+    // void OnMouseDown()
+    // {
+    //     // Toggle menu UI
+    //     if (menuUI != null)
+    //     {
+    //         if (menuUI.activeSelf)
+    //         {
+    //             CloseMenu();
+    //         }
+    //         else
+    //         {
+    //             OpenMenu();
+    //         }
+    //     }
+    // }
+
+    // public void OpenMenu()
+    // {
+    //     menuUI.SetActive(true);
+    //     menuUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
+    // }
+
+    // public void CloseMenu()
+    // {
+    //     menuUI.SetActive(false);
+    // }
 }
 
