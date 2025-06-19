@@ -49,7 +49,7 @@ public class BaseUnit : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Kinematic; // Always keep as Kinematic for MovePosition
     }
 
     // === INPUT SELEKSI DAN GERAK ===
@@ -58,12 +58,10 @@ public class BaseUnit : MonoBehaviour
         if (selectedUnit != null && selectedUnit != this)
         {
             selectedUnit.spriteRenderer.color = selectedUnit.originalColor;
-            selectedUnit.SetKinematic(true);
         }
 
         selectedUnit = this;
         spriteRenderer.color = highlightColor;
-        SetKinematic(false);
 
         UnitSelected?.Invoke(this);
     }
@@ -71,12 +69,41 @@ public class BaseUnit : MonoBehaviour
     protected virtual void Update()
     {
         if (selectedUnit == this && Input.GetMouseButtonDown(1))
-        {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
+{
+    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    mouseWorldPos.z = 0f;
 
+    // Cek apakah klik kanan diarahkan ke Tower
+    Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+    Collider2D hit = Physics2D.OverlapPoint(mousePos2D);
+
+            if (hit != null && hit.TryGetComponent(out Tower tower))
+            {
+                // Hanya izinkan jika unit ini adalah Archer
+                if (this is Archer archer)
+                {
+                    if (tower.TryInsertArcher(archer))
+                    {
+                        Debug.Log("Archer berhasil naik ke tower.");
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("Tower sudah berisi Archer.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Unit ini tidak dapat naik ke tower.");
+                    return;
+                }
+            }
+
+            // Jika bukan klik ke Tower, maka lanjutkan movement biasa
             SetTargetPosition(mouseWorldPos);
         }
+
 
         if (selectedUnit == this && Input.GetMouseButtonDown(0))
         {
@@ -87,7 +114,6 @@ public class BaseUnit : MonoBehaviour
             if (hit == null || hit.gameObject != gameObject)
             {
                 spriteRenderer.color = originalColor;
-                SetKinematic(true);
                 selectedUnit = null;
             }
         }
@@ -109,19 +135,17 @@ public class BaseUnit : MonoBehaviour
         }
     }
 
-    private void SetKinematic(bool isKinematic)
-    {
-        rb.bodyType = isKinematic ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
-    }
-
     public void SetTargetPosition(Vector3 position)
     {
+    Vector3 scale = transform.localScale;
+    scale.x = Mathf.Abs(scale.x) * Mathf.Sign(position.x - transform.position.x);
+    transform.localScale = scale;
         targetPosition = position;
         isMoving = true;
     }
 
     // === HEALTH & DAMAGE ===
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHP -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. Remaining HP: {currentHP}");
@@ -134,8 +158,7 @@ public class BaseUnit : MonoBehaviour
 
     public virtual void Die()
     {
-        Debug.Log($"{gameObject.name} has been destroyed!");
-        Destroy(gameObject);
+        Debug.Log($"{gameObject.name} mati! Menunggu subclass untuk handle Destroy.");
     }
 
     // === HEALTH UTIL ===

@@ -16,7 +16,7 @@ public class GoldMineClickHandler : MonoBehaviour
 
         // Pastikan unit yang sedang dipilih adalah worker
         BaseUnit selected = BaseUnit.selectedUnit;
-        if (selected is WorkerUnit worker)
+        if (selected is Worker worker)
         {
             worker.SetMiningTarget(goldMine);
             Debug.Log("📌 Worker dikirim ke tambang!");
