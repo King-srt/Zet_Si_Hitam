@@ -144,6 +144,7 @@ MonoBehaviour:
   attackDamage: 10
   enemyTags:
   - Zombie
+  - ZombieKroco
   arrowPrefab: {fileID: 1466735626331050418, guid: 88edc8b6f03e1a64e9d12c5dd4c626a6, type: 3}
   firePoint: {fileID: 1642020561582094732}
 --- !u!50 &1835561544603733292

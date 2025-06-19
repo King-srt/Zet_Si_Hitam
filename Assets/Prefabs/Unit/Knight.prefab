@@ -207,3 +207,4 @@ MonoBehaviour:
   attackDamage: 10
   enemyTags:
   - Zombie
+  - ZombieKroco

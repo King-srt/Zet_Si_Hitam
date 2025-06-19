@@ -19,7 +19,6 @@ public abstract class SoldierUnit : BaseUnit
     {
         base.Start();
         animator = GetComponent<Animator>();
-        StartCoroutine(UpdateTargetRoutine(0.1f));
     }
 
     protected virtual void OnEnable()
@@ -46,51 +45,54 @@ public abstract class SoldierUnit : BaseUnit
     }
 
     protected override void Update()
-    {
-        base.Update();
+{
+    base.Update();
 
-        // Only attack at night
-        if (!GameManager.IsNight)
+    if (!GameManager.IsNight)
+    {
+        animator.SetBool("isWalking", false);
+        currentTarget = null;
+        return;
+    }
+
+    // Cari musuh terdekat SETIAP frame (real-time)
+    BaseEnemy newTarget = FindClosestEnemy();
+
+    if (newTarget != null)
+    {
+        currentTarget = newTarget;
+
+        float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
+
+        // Hadapkan ke arah target
+        Vector3 scale = transform.localScale;
+        scale.x = Mathf.Abs(scale.x) * Mathf.Sign(currentTarget.transform.position.x - transform.position.x);
+        transform.localScale = scale;
+
+        if (distance <= attackRange)
         {
             animator.SetBool("isWalking", false);
-            return;
-        }
 
-        if (currentTarget != null && !currentTarget.IsDead())
-        {
-            float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
-
-            if (distance <= attackRange)
+            if (Time.time >= lastAttackTime + attackCooldown)
             {
-                // Face the target
-                Vector3 scale = transform.localScale;
-                scale.x = Mathf.Abs(scale.x) * Mathf.Sign(currentTarget.transform.position.x - transform.position.x);
-                transform.localScale = scale;
-
-                animator.SetBool("isWalking", false);
-
-                if (Time.time >= lastAttackTime + attackCooldown)
-                {
-                    animator.SetTrigger("attack");
-                    PerformAttack(currentTarget);
-                    lastAttackTime = Time.time;
-                }
-            }
-            else
-            {
-                Vector3 scale = transform.localScale;
-                scale.x = Mathf.Abs(scale.x) * Mathf.Sign(currentTarget.transform.position.x - transform.position.x);
-                transform.localScale = scale;
-
-                SetTargetPosition(currentTarget.transform.position);
-                animator.SetBool("isWalking", true);
+                animator.SetTrigger("attack");
+                PerformAttack(currentTarget);
+                lastAttackTime = Time.time;
             }
         }
         else
         {
-            animator.SetBool("isWalking", false);
+            SetTargetPosition(currentTarget.transform.position);
+            animator.SetBool("isWalking", true);
         }
     }
+    else
+    {
+        animator.SetBool("isWalking", false);
+        currentTarget = null;
+    }
+}
+
 
     public void SetTarget(BaseEnemy target)
     {
@@ -135,41 +137,6 @@ private IEnumerator DestroyAfterDeathAnimation()
     yield return new WaitForSeconds(animLength);
     Debug.Log($"{gameObject.name} menghancurkan diri setelah animasi death");
     Destroy(gameObject);
-}
-
-IEnumerator UpdateTargetRoutine(float interval)
-{
-    while (true)
-    {
-        if (!GameManager.IsNight)
-        {
-            currentTarget = null;
-        }
-        else
-        {
-            BaseEnemy closest = FindClosestEnemy();
-            if (closest != null)
-            {
-                float distToClosest = Vector2.Distance(transform.position, closest.transform.position);
-                float distToCurrent = currentTarget != null ? Vector2.Distance(transform.position, currentTarget.transform.position) : Mathf.Infinity;
-
-                // Ganti target jika:
-                // - currentTarget null
-                // - currentTarget sudah mati
-                // - closest lebih dekat daripada current
-                if (currentTarget == null || currentTarget.IsDead() || distToClosest < distToCurrent)
-                {
-                    currentTarget = closest;
-                }
-            }
-            else
-            {
-                currentTarget = null;
-            }
-        }
-
-        yield return new WaitForSeconds(interval);
-    }
 }
 
 
