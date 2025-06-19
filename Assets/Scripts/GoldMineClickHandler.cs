@@ -12,9 +12,8 @@ public class GoldMineClickHandler : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!Input.GetMouseButtonDown(0)) return; // klik kiri
+        if (!Input.GetMouseButtonDown(0)) return;
 
-        // Pastikan unit yang sedang dipilih adalah worker
         BaseUnit selected = BaseUnit.selectedUnit;
         if (selected is Worker worker)
         {
