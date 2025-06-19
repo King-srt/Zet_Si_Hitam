@@ -6,13 +6,16 @@ public class ZombieSpawner : MonoBehaviour
 {
     [Header("Spawner Settings")]
     public GameObject zombiePrefab;
-    public int zombiesPerWave = 5;
     public float spawnRadius = 5f;
     public float spawnInterval = 1f;
 
     [Header("Runtime")]
     public List<ZombieAI> activeZombies = new List<ZombieAI>();
     public bool spawning = false;
+
+    private int zombiesSpawnedThisNight = 0;
+    private int maxZombiesThisNight = 0;
+    private bool spawnerDisabled = false;
 
     void OnEnable()
     {
@@ -26,18 +29,33 @@ public class ZombieSpawner : MonoBehaviour
 
     void Start()
     {
-        // Remove this: StartCoroutine(SpawnWave());
+        // Tidak perlu spawn di Start
     }
 
     private void HandleTimeChanged(bool isNight)
     {
+        if (spawnerDisabled) return;
+
         if (isNight && !spawning)
         {
+            int day = FindObjectOfType<GameManager>().GetDayCount();
+            switch (day)
+            {
+                case 1: maxZombiesThisNight = 10; break;
+                case 2: maxZombiesThisNight = 15; break;
+                case 3: maxZombiesThisNight = 20; break;
+                case 4: maxZombiesThisNight = 25; break;
+                case 5: maxZombiesThisNight = 30; break;
+                default:
+                    maxZombiesThisNight = 0;
+                    spawnerDisabled = true;
+                    return;
+            }
+            zombiesSpawnedThisNight = 0;
             StartCoroutine(SpawnWave());
         }
         else if (!isNight)
         {
-            // Optionally, stop spawning if day starts
             StopSpawning();
         }
     }
@@ -46,9 +64,35 @@ public class ZombieSpawner : MonoBehaviour
     {
         spawning = true;
 
-        for (int i = 0; i < zombiesPerWave; i++)
+        while (zombiesSpawnedThisNight < maxZombiesThisNight)
         {
+            // Cek apakah masih ada target (BaseUnit atau BaseBuilding yang belum mati)
+            bool hasTarget = false;
+            foreach (string tag in new[] { "Headquarter", "Worker", "Barrack", "Knight", "Archer", "Tower", "Wall" })
+            {
+                GameObject[] objs = GameObject.FindGameObjectsWithTag(tag);
+                foreach (GameObject obj in objs)
+                {
+                    if (obj == null) continue;
+                    var unit = obj.GetComponent<BaseUnit>();
+                    var building = obj.GetComponent<BaseBuilding>();
+                    if ((unit != null && !unit.IsDead()) || (building != null && !building.IsDead()))
+                    {
+                        hasTarget = true;
+                        break;
+                    }
+                }
+                if (hasTarget) break;
+            }
+
+            if (!hasTarget)
+            {
+                StopSpawning();
+                yield break;
+            }
+
             SpawnZombie();
+            zombiesSpawnedThisNight++;
             yield return new WaitForSeconds(spawnInterval);
         }
 
