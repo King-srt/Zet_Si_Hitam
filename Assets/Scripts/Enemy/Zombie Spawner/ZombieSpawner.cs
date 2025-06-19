@@ -4,10 +4,19 @@ using System.Collections.Generic;
 
 public class ZombieSpawner : MonoBehaviour
 {
+
+ 
+
     [Header("Spawner Settings")]
     public GameObject zombiePrefab;
     public float spawnRadius = 5f;
     public float spawnInterval = 1f;
+
+    [Header("Boss Settings")]
+    public GameObject bossZombiePrefab;
+    public bool isBossSpawner = false; // <-- tambahkan ini
+    private bool bossSpawned = false;
+    private bool bossAlive = false;
 
     [Header("Runtime")]
     public List<ZombieAI> activeZombies = new List<ZombieAI>();
@@ -52,6 +61,15 @@ public class ZombieSpawner : MonoBehaviour
                     return;
             }
             zombiesSpawnedThisNight = 0;
+
+            // Spawn BossZombie hanya di day 5, hanya sekali
+            if (day == 5 && !bossSpawned && bossZombiePrefab != null && isBossSpawner)
+            {
+                SpawnBossZombie();
+                bossSpawned = true;
+                bossAlive = true;
+            }
+
             StartCoroutine(SpawnWave());
         }
         else if (!isNight)
@@ -91,6 +109,19 @@ public class ZombieSpawner : MonoBehaviour
                 yield break;
             }
 
+            // Pada hari ke-5, jika boss masih hidup, tetap spawn zombie biasa
+            // Jika boss sudah mati, stop spawn (akan di-handle di OnBossZombieDied)
+            if (bossSpawned && bossAlive && FindObjectOfType<GameManager>().GetDayCount() == 5)
+            {
+                // Tetap spawn zombie biasa
+            }
+            else if (bossSpawned && !bossAlive && FindObjectOfType<GameManager>().GetDayCount() == 5)
+            {
+                // Boss sudah mati, stop spawner di hari ke-5
+                StopSpawning();
+                yield break;
+            }
+
             SpawnZombie();
             zombiesSpawnedThisNight++;
             yield return new WaitForSeconds(spawnInterval);
@@ -109,6 +140,29 @@ public class ZombieSpawner : MonoBehaviour
         {
             zombieAI.spawner = this;
             activeZombies.Add(zombieAI);
+        }
+    }
+
+    void SpawnBossZombie()
+    {
+        Vector2 spawnPos = (Vector2)transform.position + Random.insideUnitCircle * spawnRadius;
+        GameObject boss = Instantiate(bossZombiePrefab, spawnPos, Quaternion.identity);
+        BossZombie bossScript = boss.GetComponent<BossZombie>();
+        if (bossScript != null)
+        {
+            // Bisa set property khusus boss di sini jika perlu
+        }
+    }
+
+    // Dipanggil oleh BossZombie saat mati
+    public void OnBossZombieDied()
+    {
+        bossAlive = false;
+        // Jika hari ke-5, stop spawner setelah boss mati
+        int day = FindObjectOfType<GameManager>().GetDayCount();
+        if (day == 5)
+        {
+            StopSpawning();
         }
     }
 

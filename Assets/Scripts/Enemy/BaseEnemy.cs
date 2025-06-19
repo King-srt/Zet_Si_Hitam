@@ -233,36 +233,39 @@ public abstract class BaseEnemy : MonoBehaviour
 
     // Ganti perhitungan distance di Update/AI dengan fungsi ini:
     protected float GetDistanceToTarget(Transform target)
+{
+    if (target == null) return Mathf.Infinity;
+
+    // Jika target BaseBuilding dan punya collider
+    BaseBuilding building = target.GetComponent<BaseBuilding>();
+    if (building != null)
     {
-        if (target == null) return Mathf.Infinity;
-
-        // Jika target BaseBuilding dan punya collider
-        BaseBuilding building = target.GetComponent<BaseBuilding>();
-        if (building != null)
+        Collider2D col = building.GetComponent<Collider2D>();
+        if (col != null)
         {
-            Collider2D col = building.GetComponent<Collider2D>();
-            if (col != null)
-            {
-                Vector2 closest = col.ClosestPoint(transform.position);
-                return Vector2.Distance(transform.position, closest);
-            }
-        }
+            Vector2 closest = col.ClosestPoint(transform.position);
+            // Tidak ada offset, zombie berhenti tepat di luar collider bangunan
+            float dist = Vector2.Distance(transform.position, closest);
+            return Mathf.Max(0f, dist + 1f); // atau -0.2f untuk lebih dekat lagi
 
-        // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
-        BaseUnit unit = target.GetComponent<BaseUnit>();
-        if (unit != null)
-        {
-            Collider2D col = unit.GetComponent<Collider2D>();
-            if (col != null)
-            {
-                Vector2 closest = col.ClosestPoint(transform.position);
-                // Bisa tambahkan offset kecil jika ingin lebih dekat, misal -0.1f
-                float dist = Vector2.Distance(transform.position, closest);
-                return Mathf.Max(0f, dist - 0.1f);
-            }
         }
-
-        // Default: jarak ke pusat
-        return Vector2.Distance(transform.position, target.position);
     }
+
+    // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
+    BaseUnit unit = target.GetComponent<BaseUnit>();
+    if (unit != null)
+    {
+        Collider2D col = unit.GetComponent<Collider2D>();
+        if (col != null)
+        {
+            Vector2 closest = col.ClosestPoint(transform.position);
+            // Offset agar zombie bisa lebih dekat ke unit (misal -0.1f)
+            float dist = Vector2.Distance(transform.position, closest);
+            return Mathf.Max(0f, dist + 1f);
+        }
+    }
+
+    // Default: jarak ke pusat
+    return Vector2.Distance(transform.position, target.position);
+}
 }
