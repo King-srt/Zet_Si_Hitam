@@ -264,22 +264,6 @@ public abstract class BaseEnemy : MonoBehaviour
             return Mathf.Max(0f, dist + 1f);
         }
     }
-            }
-        }
-
-        // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
-        BaseUnit unit = target.GetComponent<BaseUnit>();
-        if (unit != null)
-        {
-            Collider2D col = unit.GetComponent<Collider2D>();
-            if (col != null)
-            {
-                Vector2 closest = col.ClosestPoint(transform.position);
-                // Offset agar zombie bisa lebih dekat ke unit (misal -0.1f)
-                float dist = Vector2.Distance(transform.position, closest);
-                return Mathf.Max(0f, dist + 1f);
-            }
-        }
 
         // Default: jarak ke pusat
         return Vector2.Distance(transform.position, target.position);
