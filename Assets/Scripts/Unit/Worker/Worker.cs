@@ -7,7 +7,9 @@ public class Worker : BaseUnit
     private WorkerState state = WorkerState.Idle;
 
     private Headquarter nearestHQ;
-    private Vector3 previousMinePosition;
+    private bool isReturningToHQ = false;
+    private Vector2 previousMinePosition;
+
 
 
     [Header("Mining Settings")]
@@ -28,7 +30,6 @@ public class Worker : BaseUnit
 
     protected override void Start()
     {
-        GoldMine.GoldMined += OnGoldMined;
         animatorController = GetComponent<WorkerAnimatorController>();
 
         Transform body = transform.Find("Body");
@@ -80,6 +81,8 @@ public class Worker : BaseUnit
 
     private void HandleMining()
     {
+        if (state != WorkerState.Mining) return;
+
         if (currentTarget == null || currentTarget.IsDepleted())
         {
             animatorController.SetMining(false);
@@ -96,8 +99,19 @@ public class Worker : BaseUnit
                 bool mined = currentTarget.MineGold(goldPerMine);
                 if (mined)
                 {
+                    carriedGold += goldPerMine;
+                    Debug.Log($"Worker mengangkut {goldPerMine}, total: {carriedGold}");
+
                     GameObject goldPickup = Instantiate(goldPickupPrefab, currentTarget.transform.position, Quaternion.identity);
                     goldPickup.GetComponent<GoldPickup>().target = transform;
+
+                    nearestHQ = FindNearestHeadquarter();
+                    if (nearestHQ != null)
+                    {
+                        previousMinePosition = transform.position;
+                        SetTargetPosition(nearestHQ.transform.position);
+                        state = WorkerState.Returning;
+                    }
                 }
                 else
                 {
@@ -115,6 +129,7 @@ public class Worker : BaseUnit
     public void SetMiningTarget(GoldMine mine)
     {
         currentTarget = mine;
+        state = WorkerState.Mining;
 
         Collider2D mineCollider = mine.GetComponent<Collider2D>();
         if (mineCollider == null)
@@ -143,20 +158,6 @@ public class Worker : BaseUnit
     public void CloseMenu()
     {
         menuUI.SetActive(false);
-    }
-
-    void OnGoldMined(int amount)
-    {
-        carriedGold += amount;
-        Debug.Log($"Worker mengangkut {amount}, total: {carriedGold}");
-
-        nearestHQ = FindNearestHeadquarter();
-        if (nearestHQ != null)
-        {
-            previousMinePosition = transform.position; // Simpan posisi GoldMine
-            SetTargetPosition(nearestHQ.transform.position);
-            state = WorkerState.Returning;
-        }
     }
 
     private Headquarter FindNearestHeadquarter()

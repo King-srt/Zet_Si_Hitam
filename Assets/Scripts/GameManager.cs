@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
 {
     public enum TimeState { Day, Night }
     public static event Action<bool> OnTimeChanged; // true = malam, false = siang
-    public static bool IsNight { get; private set; } = false; //ini untuk zombie ntar
+    public static bool IsNight { get; private set; } = false; // ini untuk zombie ntar
+    public static GameManager Instance { get; private set; }
 
 
     [Header("Lighting")]
@@ -188,8 +189,6 @@ public class GameManager : MonoBehaviour
             goldText.text = "Gold: " + totalGold;
         }
     }
-
-    public static GameManager Instance { get; private set; }
 
     void Awake()
     {
