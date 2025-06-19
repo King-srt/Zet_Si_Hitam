@@ -58,4 +58,12 @@ public class Headquarter : BaseBuilding
         SetActiveBuildingUI(menuUI); // Aktifkan UI ketika dipilih
     }
 
+    public void StoreGold(int amount)
+    {
+        if (amount <= 0) return;
+        
+        Debug.Log($"💰 HQ menerima {amount} gold dari Worker.");
+        GameManager.Instance.AddGold(amount);
+    }
+
 }

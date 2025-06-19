@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Zet Si Hitam.sln"
+    "dotnet.defaultSolution": "Zet_Si_Hitam.sln"
 }
