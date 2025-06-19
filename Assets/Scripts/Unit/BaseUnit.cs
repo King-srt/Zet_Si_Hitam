@@ -108,6 +108,9 @@ public class BaseUnit : MonoBehaviour
 
     public void SetTargetPosition(Vector3 position)
     {
+    Vector3 scale = transform.localScale;
+    scale.x = Mathf.Abs(scale.x) * Mathf.Sign(position.x - transform.position.x);
+    transform.localScale = scale;
         targetPosition = position;
         isMoving = true;
     }

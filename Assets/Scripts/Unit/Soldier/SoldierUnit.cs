@@ -19,7 +19,7 @@ public abstract class SoldierUnit : BaseUnit
     {
         base.Start();
         animator = GetComponent<Animator>();
-        StartCoroutine(UpdateTargetRoutine(1f));
+        StartCoroutine(UpdateTargetRoutine(0.1f));
     }
 
     protected virtual void OnEnable()
@@ -78,6 +78,10 @@ public abstract class SoldierUnit : BaseUnit
             }
             else
             {
+                Vector3 scale = transform.localScale;
+                scale.x = Mathf.Abs(scale.x) * Mathf.Sign(currentTarget.transform.position.x - transform.position.x);
+                transform.localScale = scale;
+
                 SetTargetPosition(currentTarget.transform.position);
                 animator.SetBool("isWalking", true);
             }
@@ -146,8 +150,14 @@ IEnumerator UpdateTargetRoutine(float interval)
             BaseEnemy closest = FindClosestEnemy();
             if (closest != null)
             {
-                float distance = Vector2.Distance(transform.position, closest.transform.position);
-                if (currentTarget == null || currentTarget.IsDead() || distance < Vector2.Distance(transform.position, currentTarget.transform.position) || distance > attackRange)
+                float distToClosest = Vector2.Distance(transform.position, closest.transform.position);
+                float distToCurrent = currentTarget != null ? Vector2.Distance(transform.position, currentTarget.transform.position) : Mathf.Infinity;
+
+                // Ganti target jika:
+                // - currentTarget null
+                // - currentTarget sudah mati
+                // - closest lebih dekat daripada current
+                if (currentTarget == null || currentTarget.IsDead() || distToClosest < distToCurrent)
                 {
                     currentTarget = closest;
                 }
@@ -157,9 +167,11 @@ IEnumerator UpdateTargetRoutine(float interval)
                 currentTarget = null;
             }
         }
+
         yield return new WaitForSeconds(interval);
     }
 }
+
 
     BaseEnemy FindClosestEnemy()
     {

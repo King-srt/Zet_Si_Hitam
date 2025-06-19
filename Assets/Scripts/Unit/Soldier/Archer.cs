@@ -11,6 +11,23 @@ public class ArcherUnit : SoldierUnit
         animator = GetComponent<Animator>();
     }
 
+    protected override void Update()
+    {
+        base.Update(); // kita bisa pakai base logika, tapi override movement
+
+        // Cegah mendekat ke musuh
+        if (currentTarget != null && !currentTarget.IsDead())
+        {
+            float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
+
+            if (distance > attackRange)
+            {
+                // Jangan mendekat! Hanya idle atau cari musuh lain
+                animator.SetBool("isWalking", false);
+                SetTargetPosition(transform.position); // stay in place
+            }
+        }
+    }
     protected override void PerformAttack(BaseEnemy target)
     {
         if (animator != null)
