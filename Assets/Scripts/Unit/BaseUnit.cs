@@ -53,7 +53,7 @@ public class BaseUnit : MonoBehaviour
     }
 
     // === INPUT SELEKSI DAN GERAK ===
-    void OnMouseDown()
+    protected virtual void OnMouseDown()
     {
         if (selectedUnit != null && selectedUnit != this)
         {

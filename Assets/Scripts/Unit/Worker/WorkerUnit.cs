@@ -36,6 +36,22 @@ public class WorkerUnit : BaseUnit
         base.Update();
         animatorController.SetWalking(isMoving);
         HandleMining();
+
+        if (Input.GetKeyDown(KeyCode.E) && selectedUnit != null)
+        {
+            Debug.Log("Tombol E Ditekan Yeayyy");
+            if (menuUI != null)
+            {
+                if (menuUI.activeSelf)
+                {
+                    CloseMenu();
+                }
+                else
+                {
+                    OpenMenu();
+                }
+            }
+        }
     }
 
     private void HandleMining()
@@ -95,31 +111,15 @@ public class WorkerUnit : BaseUnit
         SetTargetPosition(stopPosition);
     }
 
-    // void OnMouseDown()
-    // {
-    //     // Toggle menu UI
-    //     if (menuUI != null)
-    //     {
-    //         if (menuUI.activeSelf)
-    //         {
-    //             CloseMenu();
-    //         }
-    //         else
-    //         {
-    //             OpenMenu();
-    //         }
-    //     }
-    // }
+    public void OpenMenu()
+    {
+        menuUI.SetActive(true);
+        menuUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
+    }
 
-    // public void OpenMenu()
-    // {
-    //     menuUI.SetActive(true);
-    //     menuUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
-    // }
-
-    // public void CloseMenu()
-    // {
-    //     menuUI.SetActive(false);
-    // }
+    public void CloseMenu()
+    {
+        menuUI.SetActive(false);
+    }
 }
 
