@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class KnightUnit : SoldierUnit
+public class Knight : SoldierUnit
 {
     protected override void PerformAttack(BaseEnemy target)
     {
