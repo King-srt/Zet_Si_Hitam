@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class GoldMine : MonoBehaviour
     [Header("Gold Settings")]
     public int goldAmount = 100;
 
+    public delegate void OnGoldMined(int amount);
+    public static event OnGoldMined GoldMined;
 
     public bool IsDepleted()
     {
@@ -20,6 +23,7 @@ public class GoldMine : MonoBehaviour
 
         goldAmount -= amount;
         goldAmount = Mathf.Max(0, goldAmount);
+        GoldMined?.Invoke(amount);
         Debug.Log($"⛏️ Mined {amount} gold. Remaining: {goldAmount}");
 
         if (IsDepleted())

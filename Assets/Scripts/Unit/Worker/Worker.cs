@@ -13,12 +13,15 @@ public class Worker : BaseUnit
     [Header("UI Menu")]
     public GameObject menuUI;
 
+    [SerializeField] private int carriedGold = 0;
+
     private float miningTimer = 0f;
     private GoldMine currentTarget;
     private WorkerAnimatorController animatorController;
 
     protected override void Start()
     {
+        GoldMine.GoldMined += OnGoldMined;
         animatorController = GetComponent<WorkerAnimatorController>();
 
         Transform body = transform.Find("Body");
@@ -66,7 +69,6 @@ public class Worker : BaseUnit
         if (distance <= miningRange)
         {
             animatorController.SetMining(true);
-            Debug.Log("Mining...");
             miningTimer += Time.deltaTime;
             if (miningTimer >= miningInterval)
             {
@@ -120,6 +122,12 @@ public class Worker : BaseUnit
     public void CloseMenu()
     {
         menuUI.SetActive(false);
+    }
+
+    void OnGoldMined(int amount)
+    {
+        carriedGold += amount;
+        Debug.Log($"Gold carried: {amount}, total: {carriedGold}");
     }
 }
 
