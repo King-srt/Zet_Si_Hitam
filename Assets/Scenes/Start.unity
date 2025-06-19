@@ -388,6 +388,52 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109084677}
   m_CullTransparentMesh: 1
+--- !u!1 &177828963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 177828965}
+  - component: {fileID: 177828964}
+  m_Layer: 0
+  m_Name: KnightSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &177828964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177828963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab1c144ffe0d77c4c8541bd867810599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  soldierPrefab: {fileID: 3103631916444826924, guid: 6ae9d32d378d9964bba2896ddf4838ac, type: 3}
+  offset: {x: 3, y: 0}
+--- !u!4 &177828965
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 177828963}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 897265481}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &205033191
 GameObject:
   m_ObjectHideFlags: 0
@@ -1229,7 +1275,7 @@ Transform:
   m_GameObject: {fileID: 503661712}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0.23, y: -0.01, z: 2.41}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14725,6 +14771,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &897265481 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1734019304897547682, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
+  m_PrefabInstance: {fileID: 753323251743747929}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &930422700
 GameObject:
   m_ObjectHideFlags: 0
@@ -61807,6 +61858,14 @@ PrefabInstance:
       propertyPath: m_Colors.m_HighlightedColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2414498769204063677, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 177828964}
+    - target: {fileID: 2414498769204063677, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SpawnSoldier
+      objectReference: {fileID: 0}
     - target: {fileID: 2465716908887708926, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
       propertyPath: m_TargetGraphic
       value: 
@@ -61875,6 +61934,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 2555843523964257598, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
+      propertyPath: soldierPrefab
+      value: 
+      objectReference: {fileID: 3790326327779080953, guid: 917f5ab4d3e6e534eb10f6af772807d3, type: 3}
     - target: {fileID: 3293495194317354884, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
       propertyPath: m_Type
       value: 0
@@ -62029,7 +62092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8467314791466221789, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
       propertyPath: m_Name
-      value: KnightSpawner
+      value: ArcherSpawner
       objectReference: {fileID: 0}
     - target: {fileID: 9012210821828776975, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
       propertyPath: m_Name
@@ -62040,6 +62103,9 @@ PrefabInstance:
     - {fileID: 4590595403779253822, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
     - {fileID: 2637560542886444776, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 1734019304897547682, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 177828965}
     - targetCorrespondingSourceObject: {fileID: 7874520603190959166, guid: 92bfd07a47f129449b0792ce7993deaf, type: 3}
       insertIndex: 0
       addedObject: {fileID: 205033192}

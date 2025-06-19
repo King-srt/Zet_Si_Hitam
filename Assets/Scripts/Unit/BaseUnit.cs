@@ -49,7 +49,7 @@ public class BaseUnit : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.freezeRotation = true;
-        rb.bodyType = RigidbodyType2D.Kinematic;
+        rb.bodyType = RigidbodyType2D.Kinematic; // Always keep as Kinematic for MovePosition
     }
 
     // === INPUT SELEKSI DAN GERAK ===
@@ -58,12 +58,10 @@ public class BaseUnit : MonoBehaviour
         if (selectedUnit != null && selectedUnit != this)
         {
             selectedUnit.spriteRenderer.color = selectedUnit.originalColor;
-            selectedUnit.SetKinematic(true);
         }
 
         selectedUnit = this;
         spriteRenderer.color = highlightColor;
-        SetKinematic(false);
 
         UnitSelected?.Invoke(this);
     }
@@ -87,7 +85,6 @@ public class BaseUnit : MonoBehaviour
             if (hit == null || hit.gameObject != gameObject)
             {
                 spriteRenderer.color = originalColor;
-                SetKinematic(true);
                 selectedUnit = null;
             }
         }
@@ -109,19 +106,17 @@ public class BaseUnit : MonoBehaviour
         }
     }
 
-    private void SetKinematic(bool isKinematic)
-    {
-        rb.bodyType = isKinematic ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
-    }
-
     public void SetTargetPosition(Vector3 position)
     {
+    Vector3 scale = transform.localScale;
+    scale.x = Mathf.Abs(scale.x) * Mathf.Sign(position.x - transform.position.x);
+    transform.localScale = scale;
         targetPosition = position;
         isMoving = true;
     }
 
     // === HEALTH & DAMAGE ===
-    public void TakeDamage(int amount)
+    public virtual void TakeDamage(int amount)
     {
         currentHP -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. Remaining HP: {currentHP}");
@@ -134,8 +129,7 @@ public class BaseUnit : MonoBehaviour
 
     public virtual void Die()
     {
-        Debug.Log($"{gameObject.name} has been destroyed!");
-        Destroy(gameObject);
+        Debug.Log($"{gameObject.name} mati! Menunggu subclass untuk handle Destroy.");
     }
 
     // === HEALTH UTIL ===

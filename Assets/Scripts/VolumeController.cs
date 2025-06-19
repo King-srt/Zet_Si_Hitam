@@ -12,7 +12,7 @@ public class MusicVolumeController : MonoBehaviour
 
     private float originalVolume;
     private float tempVolume;
-    private bool isPaused = false;
+    protected bool isPaused = false;
 
     void Start()
     {

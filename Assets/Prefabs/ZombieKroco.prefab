@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7448387703016024231}
   m_Layer: 0
   m_Name: ZombieKroco
-  m_TagString: Untagged
+  m_TagString: ZombieKroco
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -198,14 +198,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89d98a0d919e77e428ff2e9b42ec4196, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRange: 1.5
-  retreatDistance: 10
-  maxSpeed: 2
-  maxForce: 5
-  attackCooldown: 1
-  retreatDelay: 30
+  maxHP: 100
   damage: 10
-  spawner: {fileID: 0}
+  moveSpeed: 2
+  attackRange: 1.5
+  attackCooldown: 1
+  retreatDistance: 10
+  maxForce: 5
   targetTags:
   - Headquarter
   - Worker
@@ -214,3 +213,7 @@ MonoBehaviour:
   - Archer
   - Tower
   - Wall
+  updateTargetInterval: 1
+  animator: {fileID: 0}
+  retreatDelay: 30
+  spawner: {fileID: 0}
