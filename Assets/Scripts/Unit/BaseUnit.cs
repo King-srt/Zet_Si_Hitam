@@ -53,7 +53,7 @@ public class BaseUnit : MonoBehaviour
     }
 
     // === INPUT SELEKSI DAN GERAK ===
-    void OnMouseDown()
+    protected virtual void OnMouseDown()
     {
         if (selectedUnit != null && selectedUnit != this)
         {
@@ -69,12 +69,41 @@ public class BaseUnit : MonoBehaviour
     protected virtual void Update()
     {
         if (selectedUnit == this && Input.GetMouseButtonDown(1))
-        {
-            Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorldPos.z = 0f;
+{
+    Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    mouseWorldPos.z = 0f;
 
+    // Cek apakah klik kanan diarahkan ke Tower
+    Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+    Collider2D hit = Physics2D.OverlapPoint(mousePos2D);
+
+            if (hit != null && hit.TryGetComponent(out Tower tower))
+            {
+                // Hanya izinkan jika unit ini adalah Archer
+                if (this is Archer archer)
+                {
+                    if (tower.TryInsertArcher(archer))
+                    {
+                        Debug.Log("Archer berhasil naik ke tower.");
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("Tower sudah berisi Archer.");
+                        return;
+                    }
+                }
+                else
+                {
+                    Debug.Log("Unit ini tidak dapat naik ke tower.");
+                    return;
+                }
+            }
+
+            // Jika bukan klik ke Tower, maka lanjutkan movement biasa
             SetTargetPosition(mouseWorldPos);
         }
+
 
         if (selectedUnit == this && Input.GetMouseButtonDown(0))
         {
