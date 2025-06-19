@@ -250,7 +250,7 @@ public abstract class BaseEnemy : MonoBehaviour
 
         }
     }
-
+    
     // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
     BaseUnit unit = target.GetComponent<BaseUnit>();
     if (unit != null)
