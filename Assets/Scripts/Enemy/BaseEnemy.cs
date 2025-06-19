@@ -93,6 +93,7 @@ public abstract class BaseEnemy : MonoBehaviour
         }
     }
 
+    // Cari target terdekat: BaseUnit atau BaseBuilding
     protected virtual void UpdateTarget()
     {
         float closestDistance = Mathf.Infinity;
@@ -105,8 +106,16 @@ public abstract class BaseEnemy : MonoBehaviour
             {
                 if (obj == null) continue;
 
+                // Cek BaseUnit
                 BaseUnit unit = obj.GetComponent<BaseUnit>();
                 if (unit != null && unit.IsDead()) continue;
+
+                // Cek BaseBuilding
+                BaseBuilding building = obj.GetComponent<BaseBuilding>();
+                if (building != null && building.IsDead()) continue;
+
+                // Hanya pilih jika ada salah satu komponen
+                if (unit == null && building == null) continue;
 
                 float dist = Vector2.Distance(transform.position, obj.transform.position);
                 if (dist < closestDistance)
@@ -120,7 +129,7 @@ public abstract class BaseEnemy : MonoBehaviour
         currentTarget = closest;
     }
 
-    // Movement ke target
+    // Steering behaviour untuk bergerak ke target
     public virtual void MoveToTarget(Transform target)
     {
         if (isAttacking) return;
@@ -144,29 +153,49 @@ public abstract class BaseEnemy : MonoBehaviour
         }
     }
 
-    // Attack ke target
+    // Attack ke BaseUnit atau BaseBuilding
     public virtual void TryAttack()
     {
         if (isAttacking || isDead || currentTarget == null) return;
 
+        // Cek BaseUnit
         BaseUnit targetUnit = currentTarget.GetComponent<BaseUnit>();
-        if (targetUnit == null || targetUnit.IsDead())
+        if (targetUnit != null && !targetUnit.IsDead())
         {
-            UpdateTarget();
+            isAttacking = true;
+            velocity = Vector2.zero;
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+                animator.SetTrigger("Attack");
+            }
+
+            targetUnit.TakeDamage(damage);
+
+            StartCoroutine(ResetAttackCooldown());
             return;
         }
 
-        isAttacking = true;
-        velocity = Vector2.zero;
-        if (animator != null)
+        // Cek BaseBuilding
+        BaseBuilding targetBuilding = currentTarget.GetComponent<BaseBuilding>();
+        if (targetBuilding != null && !targetBuilding.IsDead())
         {
-            animator.SetBool("IsWalking", false);
-            animator.SetTrigger("Attack");
+            isAttacking = true;
+            velocity = Vector2.zero;
+            if (animator != null)
+            {
+                animator.SetBool("IsWalking", false);
+                animator.SetTrigger("Attack");
+            }
+
+            targetBuilding.TakeDamage(damage);
+
+            StartCoroutine(ResetAttackCooldown());
+            return;
         }
 
-        targetUnit.TakeDamage(damage);
-
-        StartCoroutine(ResetAttackCooldown());
+        // Jika target mati, cari target baru
+        UpdateTarget();
     }
 
     protected virtual IEnumerator ResetAttackCooldown()
@@ -175,7 +204,7 @@ public abstract class BaseEnemy : MonoBehaviour
         isAttacking = false;
     }
 
-    // Retreat dari target
+    // Steering behaviour untuk retreat
     public virtual void Retreat(Transform fromTarget, Vector2 retreatPoint)
     {
         Vector2 retreatDir;
@@ -200,5 +229,40 @@ public abstract class BaseEnemy : MonoBehaviour
             scale.x = Mathf.Abs(scale.x) * Mathf.Sign(velocity.x);
             transform.localScale = scale;
         }
+    }
+
+    // Ganti perhitungan distance di Update/AI dengan fungsi ini:
+    protected float GetDistanceToTarget(Transform target)
+    {
+        if (target == null) return Mathf.Infinity;
+
+        // Jika target BaseBuilding dan punya collider
+        BaseBuilding building = target.GetComponent<BaseBuilding>();
+        if (building != null)
+        {
+            Collider2D col = building.GetComponent<Collider2D>();
+            if (col != null)
+            {
+                Vector2 closest = col.ClosestPoint(transform.position);
+                return Vector2.Distance(transform.position, closest);
+            }
+        }
+
+        // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
+        BaseUnit unit = target.GetComponent<BaseUnit>();
+        if (unit != null)
+        {
+            Collider2D col = unit.GetComponent<Collider2D>();
+            if (col != null)
+            {
+                Vector2 closest = col.ClosestPoint(transform.position);
+                // Bisa tambahkan offset kecil jika ingin lebih dekat, misal -0.1f
+                float dist = Vector2.Distance(transform.position, closest);
+                return Mathf.Max(0f, dist - 0.1f);
+            }
+        }
+
+        // Default: jarak ke pusat
+        return Vector2.Distance(transform.position, target.position);
     }
 }
