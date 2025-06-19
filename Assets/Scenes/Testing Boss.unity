@@ -14586,8 +14586,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalLight: {fileID: 644707058}
   nightColor: {r: 0.17977925, g: 0.18266883, b: 0.18867922, a: 1}
-  dayDuration: 1
-  nightDuration: 100
+  dayDuration: 5
+  nightDuration: 10
   sunIcon: {fileID: 283084521}
   moonIcon: {fileID: 930422700}
   dayText: {fileID: 1665529676}
@@ -15185,6 +15185,8 @@ MonoBehaviour:
   zombiePrefab: {fileID: 8518690204541919610, guid: dd46f2b8d422f7b429835fd23abd8b12, type: 3}
   spawnRadius: 8
   spawnInterval: 5
+  bossZombiePrefab: {fileID: 0}
+  isBossSpawner: 0
   activeZombies: []
   spawning: 0
 --- !u!4 &1147434872
@@ -15646,9 +15648,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd22c62df4987c144b396098eba14040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zombiePrefab: {fileID: 6522331468494052705, guid: 67cc4066fc6d54a4bbfcb1a4cc196a93, type: 3}
+  zombiePrefab: {fileID: 6522331468494052705, guid: b70f1503d1b93fe45a6eb0a28d256844, type: 3}
   spawnRadius: 8
   spawnInterval: 5
+  bossZombiePrefab: {fileID: 6522331468494052705, guid: 67cc4066fc6d54a4bbfcb1a4cc196a93, type: 3}
+  isBossSpawner: 1
   activeZombies: []
   spawning: 0
 --- !u!1 &1455358384
@@ -16375,9 +16379,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd22c62df4987c144b396098eba14040, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zombiePrefab: {fileID: 6522331468494052705, guid: 67cc4066fc6d54a4bbfcb1a4cc196a93, type: 3}
+  zombiePrefab: {fileID: 8518690204541919610, guid: dd46f2b8d422f7b429835fd23abd8b12, type: 3}
   spawnRadius: 8
   spawnInterval: 5
+  bossZombiePrefab: {fileID: 0}
+  isBossSpawner: 0
   activeZombies: []
   spawning: 0
 --- !u!4 &1627577329
