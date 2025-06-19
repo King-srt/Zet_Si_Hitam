@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(WorkerAnimatorController))]
-public class WorkerUnit : BaseUnit
+public class Worker : BaseUnit
 {
     [Header("Mining Settings")]
     public float miningRange = 1.5f;

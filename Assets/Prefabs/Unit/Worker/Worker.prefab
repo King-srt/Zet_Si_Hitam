@@ -102,7 +102,7 @@ GameObject:
   - component: {fileID: 7146942349240568573}
   - component: {fileID: 1038601794870750912}
   m_Layer: 0
-  m_Name: WorkerUnit
+  m_Name: Worker
   m_TagString: Worker
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

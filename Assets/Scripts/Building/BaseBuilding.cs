@@ -19,7 +19,7 @@ public class BaseBuilding : MonoBehaviour
     public static event OnBuildingSelected BuildingSelected;
 
     // === INIT ===
-    void Start()
+    protected virtual void Start()
     {
         currentHP = maxHP;
 

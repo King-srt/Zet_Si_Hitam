@@ -1,7 +1,10 @@
 using UnityEngine;
 
-public class ArcherUnit : SoldierUnit
+public class Archer : SoldierUnit
 {
+
+    private Tower currentTower;
+
     [Header("Projectile Settings")]
     public GameObject arrowPrefab;
     public Transform firePoint;
@@ -45,5 +48,26 @@ public class ArcherUnit : SoldierUnit
         }
     }
 
+    public void EnterTower(Tower tower)
+    {
+        currentTower = tower;
+        transform.position = tower.GetArcherPoint().position;
+        // Tambahan: nonaktifkan movement/shooting jika perlu
+    }
 
+    public void ExitTower()
+    {
+        if (currentTower == null) return;
+
+        // Misal: keluar ke posisi di bawah tower
+        Vector3 exitPos = currentTower.transform.position + Vector3.down;
+        transform.position = exitPos;
+
+        currentTower = null;
+    }
+
+    public bool IsInTower()
+    {
+        return currentTower != null;
+    }
 }
