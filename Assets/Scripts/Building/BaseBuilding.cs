@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BaseBuilding : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class BaseBuilding : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
 
+    protected static GameObject activeBuildingUI = null;
+
     // === EVENTS ===
     public delegate void OnBuildingSelected(BaseBuilding building);
     public static event OnBuildingSelected BuildingSelected;
@@ -27,25 +30,40 @@ public class BaseBuilding : MonoBehaviour
         originalColor = spriteRenderer.color;
     }
 
-    // === INPUT SELEKSI SAJA ===
-    void OnMouseDown()
+    protected virtual void Update()
     {
-        SelectBuilding();
-    }
-
-
-    void Update()
-    {
-        if (selectedBuilding == this && Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
+            // Cek apakah klik di UI (jangan proses klik bangunan kalau iya)
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                return;
+
+            // Ambil posisi klik
             Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
 
+            // Deteksi apakah ada collider di titik klik
             Collider2D hit = Physics2D.OverlapPoint(mousePos2D);
-            if (hit == null || hit.gameObject != gameObject)
+
+            // === Klik ke bangunan ini ===
+            if (hit != null && hit.gameObject == gameObject)
             {
-                spriteRenderer.color = originalColor;
+                SelectBuilding();
+                OnBuildingClicked(); // ← subclass override UI aktifkan
+            }
+            // === Klik ke tempat lain, reset seleksi dan UI ===
+            else if (selectedBuilding == this)
+            {
+                if (spriteRenderer != null)
+                    spriteRenderer.color = originalColor;
+
                 selectedBuilding = null;
+
+                if (activeBuildingUI != null)
+                {
+                    activeBuildingUI.SetActive(false);
+                    activeBuildingUI = null;
+                }
             }
         }
     }
@@ -96,6 +114,58 @@ public class BaseBuilding : MonoBehaviour
         spriteRenderer.color = Color.yellow;
 
         BuildingSelected?.Invoke(this);
+    }
+
+    //Kontrol UI Global
+    protected void SetActiveBuildingUI(GameObject newUI)
+    {
+        // Tutup UI lama kalau ada
+        if (activeBuildingUI != null && activeBuildingUI != newUI)
+        {
+            activeBuildingUI.SetActive(false);
+        }
+
+        // Toggle UI baru
+        if (newUI != null)
+        {
+            bool willBeActive = !newUI.activeSelf;
+            newUI.SetActive(willBeActive);
+
+            if (willBeActive)
+            {
+                newUI.transform.position = transform.position + new Vector3(0, -1.5f, 0);
+                activeBuildingUI = newUI;
+            }
+            else
+            {
+                activeBuildingUI = null;
+            }
+        }
+    }
+
+    protected virtual void OnEnable()
+    {
+        BaseUnit.UnitSelected += HandleUnitSelected;
+    }
+
+    protected virtual void OnDisable()
+    {
+        BaseUnit.UnitSelected -= HandleUnitSelected;
+    }
+
+    private void HandleUnitSelected(BaseUnit unit)
+    {
+        // Saat unit dipilih, sembunyikan UI bangunan aktif
+        if (activeBuildingUI != null)
+        {
+            activeBuildingUI.SetActive(false);
+            activeBuildingUI = null;
+        }
+    }
+
+    protected virtual void OnBuildingClicked()
+    {
+        // Dibiarkan kosong, akan di-override di subclass
     }
 
 }
