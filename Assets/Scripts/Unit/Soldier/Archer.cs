@@ -35,7 +35,7 @@ public class Archer : SoldierUnit
     {
         if (animator != null)
         {
-            animator.SetTrigger("Attack03");
+            animator.SetTrigger("attack");
         }
 
         if (arrowPrefab != null && firePoint != null)
