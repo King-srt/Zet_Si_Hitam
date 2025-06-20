@@ -9,7 +9,7 @@ public abstract class SoldierUnit : BaseUnit
     public int attackDamage = 10;
 
     [Header("Target Settings")]
-    public string[] enemyTags = { "Zombie", "ZombieKroco" };
+    public string[] enemyTags = { "Zombie", "ZombieKroco", "ZombieBoss" };
 
     protected float lastAttackTime = 0f;
     protected BaseEnemy currentTarget;
