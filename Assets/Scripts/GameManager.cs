@@ -4,15 +4,14 @@ using UnityEngine.Rendering.Universal;
 using System.Collections;
 using System;
 
-
-
 using TMPro; // <-- TMP namespace
 
 public class GameManager : MonoBehaviour
 {
     public enum TimeState { Day, Night }
     public static event Action<bool> OnTimeChanged; // true = malam, false = siang
-    public static bool IsNight { get; private set; } = false; //ini untuk zombie ntar
+    public static bool IsNight { get; private set; } = false; // ini untuk zombie ntar
+    public static GameManager Instance { get; private set; }
 
 
     [Header("Lighting")]
@@ -34,8 +33,11 @@ public class GameManager : MonoBehaviour
     [Header("UI TMP Elements")]
     public TextMeshProUGUI dayText;       // Assign TMP text for "Day X"
     public TextMeshProUGUI timeText;      // (Optional) Assign TMP text for countdown time
+    public TextMeshProUGUI goldText;
 
     private int dayCount = 1;
+
+    private int totalGold = 0;
 
     void OnEnable()
     {
@@ -78,30 +80,30 @@ public class GameManager : MonoBehaviour
     }
 
     void SetState(TimeState newState)
-{
-    currentState = newState;
-
-    if (newState == TimeState.Day)
-    {   
-        IsNight = false; // <-- Fix here
-        timer = dayDuration;
-        sunIcon?.SetActive(true);
-        moonIcon?.SetActive(false);
-        StartCoroutine(SmoothLightTransition(dayColor));
-        OnTimeChanged?.Invoke(false); // false = day
-        Debug.Log($"☀️ Siang dimulai (Day {dayCount})");
-    }
-    else
     {
-        IsNight = true; // <-- Fix here
-        timer = nightDuration;
-        sunIcon?.SetActive(false);
-        moonIcon?.SetActive(true);
-        OnTimeChanged?.Invoke(true); // true = night
-        StartCoroutine(SmoothLightTransition(nightColor));
-        Debug.Log("🌙 Malam dimulai");
+        currentState = newState;
+
+        if (newState == TimeState.Day)
+        {
+            IsNight = false; // <-- Fix here
+            timer = dayDuration;
+            sunIcon?.SetActive(true);
+            moonIcon?.SetActive(false);
+            StartCoroutine(SmoothLightTransition(dayColor));
+            OnTimeChanged?.Invoke(false); // false = day
+            Debug.Log($"☀️ Siang dimulai (Day {dayCount})");
+        }
+        else
+        {
+            IsNight = true; // <-- Fix here
+            timer = nightDuration;
+            sunIcon?.SetActive(false);
+            moonIcon?.SetActive(true);
+            OnTimeChanged?.Invoke(true); // true = night
+            StartCoroutine(SmoothLightTransition(nightColor));
+            Debug.Log("🌙 Malam dimulai");
+        }
     }
-}
 
 
     void UpdateDayText()
@@ -144,20 +146,20 @@ public class GameManager : MonoBehaviour
     }
 
 
-//ini transisi untuk smooth siang ke malam nya
+    //ini transisi untuk smooth siang ke malam nya
     IEnumerator SmoothLightTransition(Color targetColor)
-{
-    Color startColor = globalLight.color;
-    float t = 0;
-
-    while (t < 1f)
     {
-        t += Time.deltaTime / lightTransitionDuration;
-        globalLight.color = Color.Lerp(startColor, targetColor, t);
-        yield return null;
+        Color startColor = globalLight.color;
+        float t = 0;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / lightTransitionDuration;
+            globalLight.color = Color.Lerp(startColor, targetColor, t);
+            yield return null;
+        }
     }
-}
-// Misal di PauseMenu.cs
+    // Misal di PauseMenu.cs
     public static GameObject cameraObject; // drag Camera di Inspector
     public static bool IsPaused { get; private set; } = false; // <-- BENAR, di dalam class
 
@@ -176,4 +178,28 @@ public class GameManager : MonoBehaviour
         cameraObject.GetComponent<CameraMovements>().enabled = true;
         // sembunyikan UI pause
     }
+
+    public void AddGold(int amount)
+    {
+        totalGold += amount;
+        Debug.Log($"🏦 Total gold sekarang: {totalGold}");
+
+        if (goldText != null)
+        {
+            goldText.text = "" + totalGold;
+        }
+    }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject); // Hindari duplikasi
+        }
+    }
+
 }

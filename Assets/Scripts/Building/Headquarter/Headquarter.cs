@@ -44,20 +44,26 @@ public class Headquarter : BaseBuilding
         }
     }
 
-    public override void Die()
+  public override void Die()
     {
-        if (IsDead()) return;
-
         base.Die();
-
-        Debug.Log("HQ Destroyed!");
-        OnHQDestroyed?.Invoke(); // Panggil event untuk GameManager
+        if (menuUI != null && menuUI.activeSelf)
+            menuUI.SetActive(false);
     }
+
 
     protected override void OnBuildingClicked()
     {
         Debug.Log("Headquarter: OnBuildingClicked dipanggil");
         SetActiveBuildingUI(menuUI); // Aktifkan UI ketika dipilih
+    }
+
+    public void StoreGold(int amount)
+    {
+        if (amount <= 0) return;
+        
+        Debug.Log($"💰 HQ menerima {amount} gold dari Worker.");
+        GameManager.Instance.AddGold(amount);
     }
 
 }

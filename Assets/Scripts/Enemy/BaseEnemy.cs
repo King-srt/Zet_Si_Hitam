@@ -233,24 +233,24 @@ public abstract class BaseEnemy : MonoBehaviour
 
     // Ganti perhitungan distance di Update/AI dengan fungsi ini:
     protected float GetDistanceToTarget(Transform target)
-{
-    if (target == null) return Mathf.Infinity;
-
-    // Jika target BaseBuilding dan punya collider
-    BaseBuilding building = target.GetComponent<BaseBuilding>();
-    if (building != null)
     {
-        Collider2D col = building.GetComponent<Collider2D>();
-        if (col != null)
+        if (target == null) return Mathf.Infinity;
+
+        // Jika target BaseBuilding dan punya collider
+        BaseBuilding building = target.GetComponent<BaseBuilding>();
+        if (building != null)
         {
-            Vector2 closest = col.ClosestPoint(transform.position);
-            // Tidak ada offset, zombie berhenti tepat di luar collider bangunan
-            float dist = Vector2.Distance(transform.position, closest);
-            return Mathf.Max(0f, dist + 1f); // atau -0.2f untuk lebih dekat lagi
+            Collider2D col = building.GetComponent<Collider2D>();
+            if (col != null)
+            {
+                Vector2 closest = col.ClosestPoint(transform.position);
+                // Tidak ada offset, zombie berhenti tepat di luar collider bangunan
+                float dist = Vector2.Distance(transform.position, closest);
+                return Mathf.Max(0f, dist + 1f); // atau -0.2f untuk lebih dekat lagi
 
         }
     }
-
+    
     // Jika target BaseUnit dan punya collider (lebih dekat, misal offset kecil)
     BaseUnit unit = target.GetComponent<BaseUnit>();
     if (unit != null)
@@ -265,7 +265,7 @@ public abstract class BaseEnemy : MonoBehaviour
         }
     }
 
-    // Default: jarak ke pusat
-    return Vector2.Distance(transform.position, target.position);
-}
+        // Default: jarak ke pusat
+        return Vector2.Distance(transform.position, target.position);
+    }
 }
