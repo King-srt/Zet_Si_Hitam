@@ -124,6 +124,21 @@ public class GameManager : MonoBehaviour
         UpdateWorkerUI();
     }
 
+public void SoldierDied(SoldierUnit soldier)
+{
+    if (soldier is Knight)
+    {
+        knightCount = Mathf.Max(0, knightCount - 1);
+        Debug.Log($"❌ Knight mati. Sisa: {knightCount}");
+    }
+    else if (soldier is Archer)
+    {
+        archerCount = Mathf.Max(0, archerCount - 1);
+        Debug.Log($"❌ Archer mati. Sisa: {archerCount}");
+    }
+
+    UpdateTotalSoldierUI();
+}
 
     private void UpdateWorkerUI()
 {

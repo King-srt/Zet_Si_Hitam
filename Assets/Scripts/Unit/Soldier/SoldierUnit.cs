@@ -115,6 +115,7 @@ public abstract class SoldierUnit : BaseUnit
 {
     base.Die(); // Panggil base untuk log atau penanda kematian
     animator.SetTrigger("death");
+    GameManager.Instance?.SoldierDied(this);
     StartCoroutine(DestroyAfterDeathAnimation());
 }
 
