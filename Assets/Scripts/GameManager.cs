@@ -39,7 +39,9 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI workerCountText;
     public TextMeshProUGUI totalSoldierText;
 
-   
+    [Header("UI Panels")]
+    public GameObject victoryPanel;
+    public GameObject defeatPanel;
 
     private int dayCount = 1;
     protected int knightCount = 0;
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
         SetState(TimeState.Day);
         UpdateDayText();
 
-        totalGold = 100;
+        totalGold = 1000;
         UpdateGoldText();
     }
 
@@ -79,16 +81,27 @@ public class GameManager : MonoBehaviour
     }
 
     void ToggleState()
+{
+    if (currentState == TimeState.Day)
     {
-        if (currentState == TimeState.Day)
-            SetState(TimeState.Night);
-        else
-        {
-            dayCount++; // Naik hari setelah malam
-            SetState(TimeState.Day);
-            UpdateDayText();
-        }
+        SetState(TimeState.Night);
     }
+    else
+    {
+        if (dayCount >= 5)
+        {
+            
+            Debug.Log("⏳ Day 5 selesai. Timer berhenti di 00:00. Tunggu kondisi menang/kalah.");
+            timer = 0f; 
+            return;    
+        }
+
+        dayCount++;
+        SetState(TimeState.Day);
+        UpdateDayText();
+    }
+}
+
 
     // Getter
     public int GetKnightCount() => knightCount;
@@ -148,6 +161,40 @@ public void SoldierDied(SoldierUnit soldier)
     }
 }
 
+    private bool gameEnded = false;
+
+public void EndGame(bool isVictory)
+{
+    if (gameEnded) return;
+
+    gameEnded = true;
+    Time.timeScale = 0f; // Pause game
+
+    if (isVictory)
+    {
+        victoryPanel?.SetActive(true);
+        Debug.Log("🏆 Victory!");
+    }
+    else
+    {
+        defeatPanel?.SetActive(true);
+        Debug.Log("💀 Defeat!");
+    }
+}
+
+
+public void NotifyBossDied()
+{
+    if (dayCount >= 5)
+    {
+        Debug.Log("🎯 Boss Zombie defeated on Day " + dayCount);
+        EndGame(true);  // Trigger victory
+    }
+    else
+    {
+        Debug.Log("⚠️ Boss Zombie mati sebelum Day 5, belum menang!");
+    }
+}
 
 
     void SetState(TimeState newState)
@@ -197,10 +244,12 @@ public void SoldierDied(SoldierUnit soldier)
     }
 
     private void GameOver()
-    {
-        Debug.Log("Game Over!");
-        Invoke(nameof(BackToMainMenu), 3f);
-    }
+{
+    Debug.Log("Game Over!");
+    EndGame(false);  // Tambahkan ini
+    Invoke(nameof(BackToMainMenu), 3f);
+}
+
 
     private void BackToMainMenu()
     {

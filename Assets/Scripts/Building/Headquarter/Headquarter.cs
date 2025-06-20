@@ -66,11 +66,17 @@ public class Headquarter : BaseBuilding
 
 
   public override void Die()
-    {
-        base.Die();
-        if (menuUI != null && menuUI.activeSelf)
-            menuUI.SetActive(false);
-    }
+{
+    base.Die();
+
+    // Nonaktifkan UI kalau ada
+    if (menuUI != null && menuUI.activeSelf)
+        menuUI.SetActive(false);
+
+    // 🟢 Trigger defeat
+    Debug.Log("🏚 HQ hancur, panggil defeat event");
+    OnHQDestroyed?.Invoke();
+}
 
 
     protected override void OnBuildingClicked()

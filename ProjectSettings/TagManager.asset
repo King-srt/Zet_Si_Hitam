@@ -13,6 +13,7 @@ TagManager:
   - Wall
   - Zombie
   - ZombieKroco
+  - ZombieBoss
   layers:
   - Default
   - TransparentFX
