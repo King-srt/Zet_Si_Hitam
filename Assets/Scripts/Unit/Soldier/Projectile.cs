@@ -36,7 +36,4 @@ transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
             Destroy(gameObject);
         }
 }
-
-
-
 }

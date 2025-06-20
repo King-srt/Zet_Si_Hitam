@@ -12,15 +12,25 @@ public class Barrack : BaseBuilding
     public GameObject archerPrefab;
     public Vector2 spawnOffset = new Vector2(3f, 0f);
 
-    // Fungsi ini bisa dipanggil dari UI Button (dengan int di Inspector)
+    // Fungsi yang dipanggil dari UI (gunakan int di Inspector button)
     public void SpawnUnit(int unitTypeInt)
     {
         UnitType type = (UnitType)unitTypeInt;
-        SpawnUnit(type);
+        int cost = GetUnitCost(type);
+
+        if (GameManager.Instance.GetGold() >= cost)
+        {
+            GameManager.Instance.SpendGold(cost);
+            SpawnUnit_Internal(type);
+            AddUnitCount(type);
+        }
+        else
+        {
+            Debug.LogWarning($"❌ Gold tidak cukup untuk memanggil {type}! (Butuh: {cost}, Punya: {GameManager.Instance.GetGold()})");
+        }
     }
 
-    // Fungsi internal menggunakan enum
-    private void SpawnUnit(UnitType type)
+    private void SpawnUnit_Internal(UnitType type)
     {
         GameObject prefab = null;
 
@@ -45,6 +55,32 @@ public class Barrack : BaseBuilding
         }
     }
 
+    private int GetUnitCost(UnitType type)
+    {
+        switch (type)
+        {
+            case UnitType.Knight:
+                return 20;
+            case UnitType.Archer:
+                return 25;
+            default:
+                return 0;
+        }
+    }
+
+    private void AddUnitCount(UnitType type)
+    {
+        switch (type)
+        {
+            case UnitType.Knight:
+                GameManager.Instance.AddKnight();
+                break;
+            case UnitType.Archer:
+                GameManager.Instance.AddArcher();
+                break;
+        }
+    }
+
     public override void Die()
     {
         base.Die();
@@ -54,7 +90,6 @@ public class Barrack : BaseBuilding
 
     protected override void OnBuildingClicked()
     {
-        SetActiveBuildingUI(menuUI); // Aktifkan UI ketika dipilih
+        SetActiveBuildingUI(menuUI);
     }
-
 }

@@ -16,33 +16,54 @@ public class Headquarter : BaseBuilding
 
     // Fungsi ini bisa dipanggil dari UI Button (dengan int di Inspector)
     public void SpawnUnit(int unitTypeInt)
+{
+    UnitType type = (UnitType)unitTypeInt;
+
+    int workerCost = 20; // harga per Worker
+
+    if (type == UnitType.Worker)
     {
-        UnitType type = (UnitType)unitTypeInt;
-        SpawnUnit(type);
-    }
-
-    // Fungsi internal menggunakan enum
-    private void SpawnUnit(UnitType type)
-    {
-        GameObject prefab = null;
-
-        switch (type)
+        if (GameManager.Instance.GetGold() >= workerCost)
         {
-            case UnitType.Worker:
-                prefab = workerPrefab;
-                break;
-        }
-
-        if (prefab != null)
-        {
-            Vector2 spawnPosition = (Vector2)transform.position + spawnOffset;
-            Instantiate(prefab, spawnPosition, Quaternion.identity);
+            // Kurangi gold dulu
+            GameManager.Instance.SpendGold(workerCost);
+            // Lalu spawn Worker
+            SpawnUnit(type);
         }
         else
         {
-            Debug.LogWarning($"❌ Prefab untuk {type} belum di-assign di Inspector.");
+            Debug.LogWarning("❌ Gold tidak cukup untuk memanggil Worker!");
         }
     }
+}
+
+
+    // Fungsi internal menggunakan enum
+    private void SpawnUnit(UnitType type)
+{
+    GameObject prefab = null;
+
+    switch (type)
+    {
+        case UnitType.Worker:
+            prefab = workerPrefab;
+            break;
+    }
+
+    if (prefab != null)
+    {
+        Vector2 spawnPosition = (Vector2)transform.position + spawnOffset;
+        Instantiate(prefab, spawnPosition, Quaternion.identity);
+
+        // Tambah jumlah Worker setelah berhasil spawn
+        GameManager.Instance.AddWorker();
+    }
+    else
+    {
+        Debug.LogWarning($"❌ Prefab untuk {type} belum di-assign di Inspector.");
+    }
+}
+
 
   public override void Die()
     {
