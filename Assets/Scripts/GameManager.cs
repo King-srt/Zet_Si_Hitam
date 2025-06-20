@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
         SetState(TimeState.Day);
         UpdateDayText();
 
-        totalGold = 1000;
+        totalGold = 100;
         UpdateGoldText();
     }
 
