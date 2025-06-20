@@ -9,7 +9,7 @@ public class ZombieSpawner : MonoBehaviour
 
     [Header("Spawner Settings")]
     public GameObject zombiePrefab;
-    public float spawnRadius = 5f;
+    public float spawnRadius = 15f;
     public float spawnInterval = 1f;
 
     [Header("Boss Settings")]

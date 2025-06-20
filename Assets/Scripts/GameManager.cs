@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
     protected int archerCount = 0;
     protected int workerCount = 0;
     private int totalGold = 0;
+    private bool hasWon = false;
 
     void OnEnable()
     {
@@ -243,18 +244,21 @@ public void NotifyBossDied()
         }
     }
 
-    private void GameOver()
+ private void GameOver()
 {
     Debug.Log("Game Over!");
-    EndGame(false);  // Tambahkan ini
+    EndGame(false);
     Invoke(nameof(BackToMainMenu), 3f);
 }
 
 
-    private void BackToMainMenu()
-    {
-        SceneManager.LoadScene("MainMenu");
-    }
+
+   private void BackToMainMenu()
+{
+    Debug.Log("🔄 Loading MainMenu scene...");
+    UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+}
+
 
     public TimeState GetCurrentState()
     {
@@ -324,17 +328,19 @@ public void SpendGold(int amount)
 }
 
 
-    void Awake()
+   void Awake()
+{
+    if (Instance == null)
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject); // Hindari duplikasi
-        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);  // 👉 Tetap hidup antar scene
     }
+    else
+    {
+        Destroy(gameObject);
+    }
+}
+
 
     private void UpdateGoldText()
 {

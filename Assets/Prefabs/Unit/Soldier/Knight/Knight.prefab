@@ -209,6 +209,7 @@ MonoBehaviour:
   enemyTags:
   - Zombie
   - ZombieKroco
+  - ZombieBoss
 --- !u!1001 &6269887880794158437
 PrefabInstance:
   m_ObjectHideFlags: 0
