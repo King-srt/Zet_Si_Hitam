@@ -53,6 +53,9 @@ public class GameManager : MonoBehaviour
     {
         SetState(TimeState.Day);
         UpdateDayText();
+
+        totalGold = 100;
+        UpdateGoldText();
     }
 
     void Update()
@@ -179,16 +182,29 @@ public class GameManager : MonoBehaviour
         // sembunyikan UI pause
     }
 
-    public void AddGold(int amount)
-    {
-        totalGold += amount;
-        Debug.Log($"🏦 Total gold sekarang: {totalGold}");
+   public void AddGold(int amount)
+{
+    totalGold += amount;
+    Debug.Log($"🏦 Total gold sekarang: {totalGold}");
 
-        if (goldText != null)
-        {
-            goldText.text = "" + totalGold;
-        }
+    if (goldText != null)
+    {
+        goldText.text = "" + totalGold;
     }
+}
+
+public int GetGold()
+{
+    return totalGold;
+}
+
+public void SpendGold(int amount)
+{
+    totalGold -= amount;
+    Debug.Log($"💸 Gold berkurang {amount}, sisa: {totalGold}");
+    UpdateGoldText();
+}
+
 
     void Awake()
     {
@@ -201,5 +217,13 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject); // Hindari duplikasi
         }
     }
+
+    private void UpdateGoldText()
+{
+    if (goldText != null)
+    {
+        goldText.text = "" + totalGold;
+    }
+}
 
 }

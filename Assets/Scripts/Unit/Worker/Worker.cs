@@ -27,6 +27,12 @@ public class Worker : BaseUnit
     private GoldMine currentTarget;
     private WorkerAnimatorController animatorController;
 
+
+   
+
+    
+
+
     protected override void Start()
     {
         animatorController = GetComponent<WorkerAnimatorController>();
@@ -41,6 +47,18 @@ public class Worker : BaseUnit
         base.Start();
     }
 
+ private void OnEnable()
+{
+    GameManager.OnTimeChanged += OnTimeChangedHandler;
+}
+
+private void OnDisable()
+{
+    GameManager.OnTimeChanged -= OnTimeChangedHandler;
+}
+
+
+
     protected override void Update()
     {
         base.Update();
@@ -48,14 +66,21 @@ public class Worker : BaseUnit
         {
             float distance = Vector2.Distance(transform.position, nearestHQ.transform.position);
             if (distance < 1f)
-            {
-                nearestHQ.StoreGold(carriedGold);
-                Debug.Log($"💰 Worker menyetorkan {carriedGold} ke HQ.");
-                carriedGold = 0;
+{
+    nearestHQ.StoreGold(carriedGold);
+    Debug.Log($"💰 Worker menyetorkan {carriedGold} ke HQ.");
+    carriedGold = 0;
 
-                SetTargetPosition(previousMinePosition);
-                state = WorkerState.Mining;
-            }
+    if (GameManager.IsNight)
+    {
+        gameObject.SetActive(false); // Worker seolah tidur saat malam
+    }
+    else
+    {
+        SetTargetPosition(previousMinePosition);
+        state = WorkerState.Mining;
+    }
+}
         }
 
         animatorController.SetWalking(isMoving);
@@ -158,6 +183,27 @@ public class Worker : BaseUnit
 
         SetTargetPosition(stopPosition);
     }
+
+    private void OnTimeChangedHandler(bool isNight)
+{
+    if (isNight)
+    {
+        // Saat malam, suruh worker kembali ke HQ
+        nearestHQ = FindNearestHeadquarter();
+        if (nearestHQ != null)
+        {
+            SetTargetPosition(nearestHQ.transform.position);
+            state = WorkerState.Returning;
+            Debug.Log("🌙 Malam tiba, Worker kembali ke HQ.");
+        }
+    }
+    else
+    {
+        // Saat pagi, worker siap menambang lagi (jika sebelumnya disembunyikan)
+        gameObject.SetActive(true);
+        Debug.Log("☀️ Pagi tiba, Worker siap bekerja.");
+    }
+}
 
     public void OpenMenu()
     {

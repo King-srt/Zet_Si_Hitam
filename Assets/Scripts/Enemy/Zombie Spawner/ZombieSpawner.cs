@@ -14,7 +14,7 @@ public class ZombieSpawner : MonoBehaviour
 
     [Header("Boss Settings")]
     public GameObject bossZombiePrefab;
-    public bool isBossSpawner = false; // <-- tambahkan ini
+    public bool isBossSpawner = false;
     private bool bossSpawned = false;
     private bool bossAlive = false;
 
@@ -150,7 +150,7 @@ public class ZombieSpawner : MonoBehaviour
         BossZombie bossScript = boss.GetComponent<BossZombie>();
         if (bossScript != null)
         {
-            // Bisa set property khusus boss di sini jika perlu
+            // ini ntaran bisa kalo perlu ges
         }
     }
 

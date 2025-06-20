@@ -16,10 +16,27 @@ public class Headquarter : BaseBuilding
 
     // Fungsi ini bisa dipanggil dari UI Button (dengan int di Inspector)
     public void SpawnUnit(int unitTypeInt)
+{
+    UnitType type = (UnitType)unitTypeInt;
+
+    int workerCost = 20; // harga per Worker
+
+    if (type == UnitType.Worker)
     {
-        UnitType type = (UnitType)unitTypeInt;
-        SpawnUnit(type);
+        if (GameManager.Instance.GetGold() >= workerCost)
+        {
+            // Kurangi gold dulu
+            GameManager.Instance.SpendGold(workerCost);
+            // Lalu spawn Worker
+            SpawnUnit(type);
+        }
+        else
+        {
+            Debug.LogWarning("❌ Gold tidak cukup untuk memanggil Worker!");
+        }
     }
+}
+
 
     // Fungsi internal menggunakan enum
     private void SpawnUnit(UnitType type)
