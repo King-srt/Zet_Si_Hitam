@@ -14750,10 +14750,10 @@ MonoBehaviour:
   dayText: {fileID: 1665529676}
   timeText: {fileID: 1455358386}
   goldText: {fileID: 1946300080}
-  workerCountText: {fileID: 0}
-  totalSoldierText: {fileID: 0}
-  victoryPanel: {fileID: 0}
-  defeatPanel: {fileID: 0}
+  workerCountText: {fileID: 1571370696}
+  totalSoldierText: {fileID: 1101988954}
+  victoryPanel: {fileID: 958329257}
+  defeatPanel: {fileID: 790822196}
 --- !u!4 &849844934
 Transform:
   m_ObjectHideFlags: 0
@@ -15382,7 +15382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombiePrefab: {fileID: 6522331468494052705, guid: b70f1503d1b93fe45a6eb0a28d256844, type: 3}
-  spawnRadius: 8
+  spawnRadius: 20
   spawnInterval: 5
   bossZombiePrefab: {fileID: 0}
   isBossSpawner: 0
@@ -15923,10 +15923,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombiePrefab: {fileID: 8518690204541919610, guid: dd46f2b8d422f7b429835fd23abd8b12, type: 3}
-  spawnRadius: 8
+  spawnRadius: 20
   spawnInterval: 5
-  bossZombiePrefab: {fileID: 0}
-  isBossSpawner: 0
+  bossZombiePrefab: {fileID: 6522331468494052705, guid: 67cc4066fc6d54a4bbfcb1a4cc196a93, type: 3}
+  isBossSpawner: 1
   activeZombies: []
   spawning: 0
 --- !u!1 &1450227271
@@ -16729,7 +16729,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zombiePrefab: {fileID: 8518690204541919610, guid: dd46f2b8d422f7b429835fd23abd8b12, type: 3}
-  spawnRadius: 8
+  spawnRadius: 20
   spawnInterval: 5
   bossZombiePrefab: {fileID: 0}
   isBossSpawner: 0
