@@ -10,12 +10,11 @@ public class Worker : BaseUnit
     private bool isReturningToHQ = false;
     private Vector2 previousMinePosition;
 
-
-
     [Header("Mining Settings")]
     public float miningRange = 1.5f;
-    public float miningInterval = 2f;
-    public int goldPerMine = 10;
+    public float miningInterval = 1f;
+    public int goldPerMine = 2;
+    public int maxCarriedGold = 10;
 
     [Header("FX Settings")]
     public GameObject goldPickupPrefab;
@@ -54,11 +53,11 @@ public class Worker : BaseUnit
                 Debug.Log($"💰 Worker menyetorkan {carriedGold} ke HQ.");
                 carriedGold = 0;
 
-                // Kembali ke posisi GoldMine
                 SetTargetPosition(previousMinePosition);
                 state = WorkerState.Mining;
             }
         }
+
         animatorController.SetWalking(isMoving);
         HandleMining();
 
@@ -81,7 +80,11 @@ public class Worker : BaseUnit
 
     private void HandleMining()
     {
-        if (state != WorkerState.Mining) return;
+        if (state != WorkerState.Mining)
+        {
+            animatorController.SetMining(false);
+            return;
+        }
 
         if (currentTarget == null || currentTarget.IsDepleted())
         {
@@ -92,39 +95,46 @@ public class Worker : BaseUnit
         float distance = Vector2.Distance(transform.position, currentTarget.transform.position);
         if (distance <= miningRange)
         {
-            animatorController.SetMining(true);
+            animatorController.SetMining(true); // Mulai animasi mining
+
             miningTimer += Time.deltaTime;
             if (miningTimer >= miningInterval)
             {
-                bool mined = currentTarget.MineGold(goldPerMine);
-                if (mined)
+                if (carriedGold < maxCarriedGold)
                 {
-                    carriedGold += goldPerMine;
-                    Debug.Log($"Worker mengangkut {goldPerMine}, total: {carriedGold}");
+                    bool mined = currentTarget.MineGold(goldPerMine);
+                    if (mined)
+                    {
+                        carriedGold += goldPerMine;
+                        Debug.Log($"Worker mengangkut {goldPerMine}, total: {carriedGold}");
 
-                    GameObject goldPickup = Instantiate(goldPickupPrefab, currentTarget.transform.position, Quaternion.identity);
-                    goldPickup.GetComponent<GoldPickup>().target = transform;
+                        GameObject goldPickup = Instantiate(goldPickupPrefab, currentTarget.transform.position, Quaternion.identity);
+                        goldPickup.GetComponent<GoldPickup>().target = transform;
+                    }
+                }
 
+                if (carriedGold >= maxCarriedGold)
+                {
                     nearestHQ = FindNearestHeadquarter();
                     if (nearestHQ != null)
                     {
-                        previousMinePosition = transform.position;
+                        previousMinePosition = GetPreciseMiningPosition(currentTarget);
                         SetTargetPosition(nearestHQ.transform.position);
+                        animatorController.SetMining(false); // Stop animasi
                         state = WorkerState.Returning;
                     }
                 }
-                else
-                {
-                    animatorController.SetMining(false);
-                }
+
                 miningTimer = 0f;
             }
         }
         else
         {
-            animatorController.SetMining(false);
+            animatorController.SetMining(false); // Tidak dalam jangkauan
         }
     }
+
+
 
     public void SetMiningTarget(GoldMine mine)
     {
@@ -179,5 +189,18 @@ public class Worker : BaseUnit
         return closest;
     }
 
-}
+    private Vector2 GetPreciseMiningPosition(GoldMine mine)
+    {
+        Collider2D mineCollider = mine.GetComponent<Collider2D>();
+        if (mineCollider == null)
+        {
+            return mine.transform.position;
+        }
 
+        Vector2 closestPoint = mineCollider.ClosestPoint(transform.position);
+        Vector2 direction = (closestPoint - (Vector2)transform.position).normalized;
+        float safeDistance = 0.2f;
+        return closestPoint - direction * safeDistance;
+    }
+
+}

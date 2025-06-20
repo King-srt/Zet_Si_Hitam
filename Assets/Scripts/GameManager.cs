@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
 
         if (goldText != null)
         {
-            goldText.text = "Gold: " + totalGold;
+            goldText.text = "" + totalGold;
         }
     }
 

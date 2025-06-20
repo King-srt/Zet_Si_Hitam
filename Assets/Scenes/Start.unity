@@ -396,47 +396,47 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3371177804905782175, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 3371177804905782175, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_Name
-      value: Goldmines
+      value: GoldMine
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.9512081
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalPosition.y
       value: -5.308387
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.03428465
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8277017624935268522, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+    - target: {fileID: 8277017624935268522, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
@@ -444,7 +444,7 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a0db7057b9654bf4f949207e730e9e55, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: daa43221840e49d43bcf9bce89bd57db, type: 3}
 --- !u!1 &283084521
 GameObject:
   m_ObjectHideFlags: 0
@@ -14703,14 +14703,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   globalLight: {fileID: 644707058}
-  nightColor: {r: 0.17977925, g: 0.18266883, b: 0.18867922, a: 1}
+  nightColor: {r: 0.2, g: 0.3, b: 0.5, a: 1}
   dayDuration: 1
-  nightDuration: 100
+  nightDuration: 300
   sunIcon: {fileID: 283084521}
   moonIcon: {fileID: 930422700}
   dayText: {fileID: 1665529676}
   timeText: {fileID: 1455358386}
-  goldText: {fileID: 0}
+  goldText: {fileID: 1946300080}
 --- !u!4 &849844934
 Transform:
   m_ObjectHideFlags: 0

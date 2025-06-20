@@ -15,7 +15,7 @@ public class BaseBuilding : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
 
-    protected static GameObject activeBuildingUI = null;
+    public static GameObject activeBuildingUI = null;
 
     // === EVENTS ===
     public delegate void OnBuildingSelected(BaseBuilding building);
