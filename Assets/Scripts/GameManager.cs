@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
     protected int archerCount = 0;
     protected int workerCount = 0;
     private int totalGold = 0;
+    private bool hasWon = false;
 
     void OnEnable()
     {

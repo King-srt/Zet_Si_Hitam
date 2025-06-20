@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 4949366654014163867}
   - component: {fileID: 7224595752530761167}
   - component: {fileID: 461511657692505370}
-  - component: {fileID: -4697871432152502371}
+  - component: {fileID: 7367494536220068938}
   m_Layer: 0
   m_Name: Zombie Boss
-  m_TagString: Zombie
+  m_TagString: ZombieBoss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -186,7 +186,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &-4697871432152502371
+--- !u!114 &7367494536220068938
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6522331468494052705}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d98a0d919e77e428ff2e9b42ec4196, type: 3}
+  m_Script: {fileID: 11500000, guid: 4c19cf5941aeda1418290b882bb2ea56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHP: 100

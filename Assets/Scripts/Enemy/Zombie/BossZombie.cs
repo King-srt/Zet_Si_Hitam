@@ -2,22 +2,26 @@ using UnityEngine;
 
 public class BossZombie : ZombieAI
 {
-    public override void Die()
+   public override void Die()
+{
+    if (isDead) return; // biar tidak double death
+    base.Die();
+
+    // Beritahu spawner
+    ZombieSpawner[] spawners = FindObjectsOfType<ZombieSpawner>();
+    foreach (var spawner in spawners)
     {
-        base.Die();
-
-        // Beritahu spawner bahwa boss sudah mati
-        ZombieSpawner[] spawners = FindObjectsOfType<ZombieSpawner>();
-        foreach (var spawner in spawners)
-        {
-            spawner.OnBossZombieDied();
-        }
-
-        // Beritahu GameManager
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.NotifyBossDied();
-        }
+        spawner.OnBossZombieDied();
     }
+
+   if (CompareTag("ZombieBoss") && GameManager.Instance != null)
+{
+    Debug.Log("🎯 Boss zombie mati, memanggil EndGame");
+    GameManager.Instance.EndGame(true); // Victory!
+}
+
+}
+
+
 }
 
