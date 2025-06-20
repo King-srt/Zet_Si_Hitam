@@ -35,8 +35,16 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI timeText;      // (Optional) Assign TMP text for countdown time
     public TextMeshProUGUI goldText;
 
-    private int dayCount = 1;
+    [Header("Unit Count UI")]
+    public TextMeshProUGUI workerCountText;
+    public TextMeshProUGUI totalSoldierText;
 
+   
+
+    private int dayCount = 1;
+    protected int knightCount = 0;
+    protected int archerCount = 0;
+    protected int workerCount = 0;
     private int totalGold = 0;
 
     void OnEnable()
@@ -82,6 +90,51 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Getter
+    public int GetKnightCount() => knightCount;
+    public int GetArcherCount() => archerCount;
+    public int GetWorkerCount() => workerCount;
+
+    public void AddKnight()
+    {
+        knightCount++;
+        Debug.Log($"⚔️ Knight count: {knightCount}");
+        UpdateTotalSoldierUI();
+    }
+
+    private void UpdateTotalSoldierUI()
+{
+    int totalSoldier = knightCount + archerCount;
+    if (totalSoldierText != null)
+    {
+        totalSoldierText.text = $"{totalSoldier}";
+    }
+}
+    public void AddArcher()
+    {
+        archerCount++;
+        Debug.Log($"🏹 Archer count: {archerCount}");
+        UpdateTotalSoldierUI();
+    }
+
+    public void AddWorker()
+    {
+        workerCount++;
+        Debug.Log($"👷 Worker count: {workerCount}");
+        UpdateWorkerUI();
+    }
+
+
+    private void UpdateWorkerUI()
+{
+    if (workerCountText != null)
+    {
+        workerCountText.text = $"{workerCount}";
+    }
+}
+
+
+
     void SetState(TimeState newState)
     {
         currentState = newState;
@@ -109,6 +162,7 @@ public class GameManager : MonoBehaviour
     }
 
 
+    // Update the day text in the UI
     void UpdateDayText()
     {
         if (dayText != null)

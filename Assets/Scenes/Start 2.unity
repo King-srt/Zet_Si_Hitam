@@ -14704,8 +14704,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalLight: {fileID: 644707058}
   nightColor: {r: 0.2, g: 0.3, b: 0.5, a: 1}
-  dayDuration: 1
-  nightDuration: 300
+  dayDuration: 30
+  nightDuration: 30
   sunIcon: {fileID: 283084521}
   moonIcon: {fileID: 930422700}
   dayText: {fileID: 1665529676}
